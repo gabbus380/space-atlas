@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware(EnsureStaff::class.':keys')->group(function () {
             Route::get('/api-keys', [AccessController::class, 'keys'])->name('admin.keys');
+            Route::get('/api-keys/organizations', [AccessController::class, 'organizations'])->name('admin.keys.organizations');
             Route::post('/api-keys', [AccessController::class, 'issueKey'])->name('admin.keys.store');
             Route::post('/api-keys/{key}/toggle', [AccessController::class, 'toggleKey'])->name('admin.keys.toggle');
         });

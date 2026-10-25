@@ -10,8 +10,13 @@
 <div class="grid2" style="margin-top:16px;align-items:start">
   <form class="card form" method="POST" action="/admin/api-keys">@csrf
     <h2 class="h3">Issue a key</h2>
-    <label>Organization<input type="text" name="name" required></label>
-    <label>Contact email<input type="email" name="contact_email"></label>
+    <div class="picker">
+      <label for="org-search">Organization
+        <input type="text" id="org-search" name="name" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="org-results" placeholder="Search the directory">
+      </label>
+      <ul class="picker-list" id="org-results" role="listbox" hidden></ul>
+    </div>
+    <label>Contact email<input type="email" id="org-email" name="contact_email"><span class="faint" id="org-email-note"></span></label>
     <div class="row">
       <label style="flex:1">Requests a day<input type="number" name="daily_quota" value="{{ config('atlas.api.starter_quota') }}" required></label>
       <label style="flex:1">People<input type="number" name="max_users" value="{{ config('atlas.api.starter_users') }}" required></label>
@@ -36,4 +41,104 @@
     </tbody>
   </table></div>
 </div>
+<script>
+(() => {
+  const input = document.getElementById('org-search');
+  const list = document.getElementById('org-results');
+  const email = document.getElementById('org-email');
+  const note = document.getElementById('org-email-note');
+  if (!input || !list) return;
+  let items = [];
+  let active = -1;
+  let timer;
+
+  const close = () => {
+    list.hidden = true;
+    list.innerHTML = '';
+    input.setAttribute('aria-expanded', 'false');
+    active = -1;
+  };
+
+  const paint = () => {
+    list.innerHTML = '';
+    items.forEach((org, index) => {
+      const li = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('role', 'option');
+      button.setAttribute('aria-selected', index === active ? 'true' : 'false');
+      button.id = 'org-option-' + index;
+      button.append(document.createTextNode(org.name));
+      const meta = document.createElement('small');
+      meta.textContent = [org.iso3, org.account, org.email].filter(Boolean).join(' · ');
+      button.append(meta);
+      button.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        choose(index);
+      });
+      li.append(button);
+      list.append(li);
+    });
+    const open = items.length > 0;
+    list.hidden = !open;
+    input.setAttribute('aria-expanded', open ? 'true' : 'false');
+    input.setAttribute('aria-activedescendant', active >= 0 ? 'org-option-' + active : '');
+  };
+
+  const choose = (index) => {
+    const org = items[index];
+    if (!org) return;
+    input.value = org.name;
+    if (org.email) {
+      email.value = org.email;
+      note.textContent = org.account ? 'Filled from ' + org.account + '. You can change it.' : 'You can change this address.';
+    } else {
+      note.textContent = 'No account is linked to this organization yet.';
+    }
+    close();
+  };
+
+  input.addEventListener('input', () => {
+    note.textContent = '';
+    clearTimeout(timer);
+    const query = input.value.trim();
+    if (query.length < 2) {
+      close();
+      return;
+    }
+    timer = setTimeout(async () => {
+      const response = await fetch('/admin/api-keys/organizations?q=' + encodeURIComponent(query), {
+        headers: {Accept: 'application/json'},
+      });
+      if (!response.ok) {
+        close();
+        return;
+      }
+      items = await response.json();
+      active = items.length ? 0 : -1;
+      paint();
+    }, 180);
+  });
+
+  input.addEventListener('keydown', (event) => {
+    if (list.hidden) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      active = Math.min(items.length - 1, active + 1);
+      paint();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      active = Math.max(0, active - 1);
+      paint();
+    } else if (event.key === 'Enter' && active >= 0) {
+      event.preventDefault();
+      choose(active);
+    } else if (event.key === 'Escape') {
+      close();
+    }
+  });
+
+  input.addEventListener('blur', () => setTimeout(close, 120));
+})();
+</script>
 @endsection

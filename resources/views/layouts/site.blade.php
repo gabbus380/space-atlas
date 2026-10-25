@@ -54,10 +54,24 @@ main{flex:1 0 auto;padding:48px 0 72px}
 .errors{border:1px solid rgba(224,103,90,.45);background:rgba(224,103,90,.08);color:#f3c1bb;padding:12px 16px;border-radius:3px;margin-bottom:20px}
 .errors ul{margin:0;padding-left:18px}
 label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-2)}
-input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;background:var(--space);border:1px solid var(--line-2);border-radius:2px;color:var(--ink);font:15px/1.4 var(--font);padding:11px 12px}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=search],input[type=url],select,textarea{width:100%;background:var(--space);border:1px solid var(--line-2);border-radius:2px;color:var(--ink);font:15px/1.4 var(--font);padding:11px 12px;color-scheme:dark}
+select{appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23e5bf6d' stroke-width='1.6' stroke-linecap='square'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+select option,select optgroup{background:var(--panel);color:var(--ink)}
+select option:checked{background:var(--raise);color:var(--gold)}
 input:focus,select:focus,textarea:focus,.btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .check{flex-direction:row;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
-.check input{margin-top:3px;accent-color:var(--gold)}
+.check input{appearance:none;width:16px;height:16px;margin-top:2px;flex:none;border:1px solid var(--line-2);background:var(--space);border-radius:2px;display:grid;place-content:center}
+.check input[type=radio]{border-radius:50%}
+.check input:checked{border-color:var(--gold);background:var(--gold-soft)}
+.check input[type=checkbox]:checked::after{content:"";width:8px;height:5px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg) translateY(-1px)}
+.check input[type=radio]:checked::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.picker{position:relative}
+.picker-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);margin:0;padding:0;list-style:none;background:var(--panel);border:1px solid var(--line-2);border-radius:2px;max-height:240px;overflow:auto;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.picker-list button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--line);font:15px/1.35 var(--font);padding:10px 12px;cursor:pointer}
+.picker-list li:last-child button{border-bottom:0}
+.picker-list button small{color:var(--ink-3);font-size:12.5px}
+.picker-list button:hover,.picker-list button[aria-selected="true"]{background:var(--raise);color:var(--gold)}
+.picker-list button:hover small,.picker-list button[aria-selected="true"] small{color:var(--ink-2)}
 .form{display:flex;flex-direction:column;gap:16px;max-width:460px}
 .auth{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 table.t{width:100%;border-collapse:collapse;font-size:14px}

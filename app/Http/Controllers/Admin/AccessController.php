@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ApiKey;
 use App\Models\Coupon;
+use App\Support\OrganizationDirectory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,6 +17,23 @@ class AccessController extends Controller
     public function keys(): View
     {
         return view('admin.keys.index', ['keys' => ApiKey::latest()->get()]);
+    }
+
+    public function organizations(Request $request): JsonResponse
+    {
+        $matches = OrganizationDirectory::search(trim((string) $request->query('q', '')), 8);
+
+        return response()->json(array_map(function (array $org) {
+            $account = OrganizationDirectory::mainAccount($org);
+
+            return [
+                'id' => $org['id'] ?? '',
+                'name' => $org['name'] ?? '',
+                'iso3' => $org['iso3'] ?? '',
+                'email' => $account?->email,
+                'account' => $account?->name,
+            ];
+        }, $matches));
     }
 
     public function issueKey(Request $request): RedirectResponse
