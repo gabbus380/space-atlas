@@ -35,6 +35,19 @@ class ApiKey extends Model
         return [$key, $plain];
     }
 
+    /** Replace the secret. The previous key stops working immediately. Returns the new plain key. */
+    public function rotate(): string
+    {
+        $plain = 'ssa_live_'.Str::random(40);
+        $this->forceFill([
+            'prefix' => substr($plain, 0, 13),
+            'key_hash' => hash('sha256', $plain),
+            'active' => true,
+        ])->save();
+
+        return $plain;
+    }
+
     public static function findByPlain(string $plain): ?self
     {
         return static::where('key_hash', hash('sha256', $plain))->first();

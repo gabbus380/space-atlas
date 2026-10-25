@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Support\Staff;
+use App\Models\ApiKey;
+use App\Models\ApiRequest;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Paddle\Billable;
 
 #[Fillable(['name', 'email', 'password', 'organization', 'marketing_opt_in', 'terms_accepted_at'])]
@@ -52,6 +55,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function unlocks(): HasMany
     {
         return $this->hasMany(FileUnlock::class);
+    }
+
+    /** Keys issued to this account, by contact email or by an API request they sent. */
+    public function apiKeys()
+    {
+        $linked = ApiRequest::query()->where('user_id', $this->id)->whereNotNull('api_key_id')->pluck('api_key_id');
+
+        return ApiKey::query()
+            ->where(function ($query) use ($linked) {
+                $query->whereRaw('lower(contact_email) = ?', [Str::lower($this->email)]);
+                if ($linked->isNotEmpty()) {
+                    $query->orWhereIn('id', $linked);
+                }
+            })
+            ->latest()
+            ->get();
     }
 
     /** Complimentary Personal access granted by EMMA, still running. */

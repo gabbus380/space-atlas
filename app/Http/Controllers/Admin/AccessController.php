@@ -58,6 +58,13 @@ class AccessController extends Controller
         return back()->with('status', $key->name.' is '.($key->active ? 'active' : 'switched off').'.');
     }
 
+    public function refreshKey(ApiKey $key): RedirectResponse
+    {
+        $plain = $key->rotate();
+
+        return back()->with('status', 'A new key for '.$key->name.' is ready. The previous key no longer works. Copy it now, it is shown only once.')->with('plain_key', $plain);
+    }
+
     public function coupons(): View
     {
         return view('admin.coupons.index', ['coupons' => Coupon::latest()->get()]);

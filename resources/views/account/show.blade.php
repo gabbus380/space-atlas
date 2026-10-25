@@ -77,6 +77,20 @@
       @endif
     </section>
 
+    @if ($apiKeys->isNotEmpty())
+    <section class="card stack" aria-labelledby="apiH">
+      <h2 class="h3" id="apiH">API</h2>
+      <p class="muted" style="margin:0">A key has been issued for this account. Refreshing it retires the previous secret immediately.</p>
+      @foreach ($apiKeys as $key)
+        <div class="row" style="justify-content:space-between">
+          <span><strong>{{ $key->name }}</strong> <code>{{ $key->prefix }}…</code><br><span class="faint" style="font-size:12.5px">{{ number_format($key->daily_quota) }} requests a day{{ $key->active ? '' : ' · switched off' }}</span></span>
+          <form method="POST" action="/account/api-keys/{{ $key->id }}/refresh">@csrf<button class="btn sm" type="submit">Refresh key</button></form>
+        </div>
+      @endforeach
+      <div class="row"><a class="btn sm" href="/account/api">API documentation</a></div>
+    </section>
+    @endif
+
     @if ($transactions->count())
     <section class="card stack" aria-labelledby="invH">
       <h2 class="h3" id="invH">Payments and invoices</h2>
