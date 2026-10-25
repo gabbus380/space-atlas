@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\Letter;
 use App\Mail\Letters;
 use App\Models\User;
 use App\Notifications\SystemMail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Laravel\Paddle\Customer;
@@ -108,12 +110,63 @@ class SystemMailTest extends TestCase
         $user = User::factory()->create(['marketing_opt_in' => true, 'briefing_opt_out' => false]);
 
         $news = URL::signedRoute('email.unsubscribe', ['user' => $user->id, 'list' => 'news']);
-        $this->get($news)->assertOk()->assertSee('monthly note is off');
+        $this->get($news)->assertOk()->assertSee('Stop the monthly note')->assertSee('Unsubscribe');
+        $this->assertTrue($user->fresh()->marketing_opt_in);
+
+        $this->post($news)->assertOk()->assertSee('The monthly note is off');
+        $this->post($news)->assertOk();
         $this->assertFalse($user->fresh()->marketing_opt_in);
 
         $briefing = URL::signedRoute('email.unsubscribe', ['user' => $user->id, 'list' => 'briefing']);
-        $this->post($briefing)->assertOk()->assertSee('unsubscribed');
+        $this->call(
+            'POST',
+            $briefing,
+            [],
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded'],
+            'List-Unsubscribe=One-Click',
+        )->assertOk()->assertSee('unsubscribed');
         $this->assertTrue($user->fresh()->briefing_opt_out);
+        $this->call(
+            'POST',
+            $briefing,
+            [],
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded'],
+            'List-Unsubscribe=One-Click',
+        )->assertOk();
+
+        $this->post('/email/preferences/'.$user->id.'/news')->assertForbidden();
+    }
+
+    public function test_inbox_unsubscribe_headers_use_the_one_click_url(): void
+    {
+        config(['app.url' => 'https://atlas.emmaconsulting.space']);
+        URL::forceRootUrl('https://atlas.emmaconsulting.space');
+        URL::forceScheme('https');
+        $user = User::factory()->create();
+        $letter = Letters::briefing([
+            'date' => '2026-10-25',
+            'edition' => '06:00 UTC',
+            'headline' => 'Header check',
+            'summary' => 'One item.',
+            'global' => [],
+        ], Letter::unsubscribe($user, 'briefing'));
+
+        $user->notify(new SystemMail($letter));
+
+        $raw = Mail::mailer()->getSymfonyTransport()->messages()->last()->getOriginalMessage()->toString();
+        $flat = preg_replace("/\r\n[ \t]/", ' ', $raw);
+        $this->assertStringContainsString('List-Unsubscribe: <https://atlas.emmaconsulting.space/email/preferences/'.$user->id.'/briefing?', $flat);
+        $this->assertStringContainsString('List-Unsubscribe-Post: List-Unsubscribe=One-Click', $flat);
+        $this->assertStringContainsString('List-Id: Sovereign Space ATLAS briefing <briefing.atlas.emmaconsulting.space>', $flat);
+
+        Mail::mailer()->getSymfonyTransport()->flush();
+        Letters::welcome($user)->sendTo($user->email);
+        $welcome = preg_replace("/\r\n[ \t]/", ' ', Mail::mailer()->getSymfonyTransport()->messages()->last()->getOriginalMessage()->toString());
+        $this->assertStringNotContainsString('List-Unsubscribe:', $welcome);
     }
 
     public function test_briefing_goes_once_to_a_paid_account_that_still_wants_it(): void

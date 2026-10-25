@@ -342,10 +342,11 @@ class Letters
     }
 
     /** @return list<Letter> */
-    public static function samples(): array
+    public static function samples(?User $recipient = null): array
     {
-        $reader = new User(['name' => 'Gabor Magyari', 'email' => 'gabor.magyari@emmaconsulting.space']);
-        $account = url('/account');
+        $reader = $recipient ?? new User(['name' => 'Gabor Magyari', 'email' => 'gabor.magyari@emmaconsulting.space']);
+        $briefingStop = $recipient?->getKey() ? Letter::unsubscribe($recipient, 'briefing') : url('/email/preferences/0/briefing');
+        $newsStop = $recipient?->getKey() ? Letter::unsubscribe($recipient, 'news') : url('/email/preferences/0/news');
         $withdrawal = new Withdrawal([
             'name' => 'Gabor Magyari',
             'email' => 'gabor.magyari@emmaconsulting.space',
@@ -385,8 +386,8 @@ class Letters
             self::subscriptionPaused($reader, 'teams'),
             self::renewalReminder($reader, 'personal', now('UTC')->addDays(7)->format('F j, Y')),
             self::accessEnding($reader, 'personal', now('UTC')->addDays(7)->format('F j, Y')),
-            self::briefing($edition, $account),
-            self::newsletter($reader, 81, 419, 'Sample headline from the latest filed briefing', $account),
+            self::briefing($edition, $briefingStop),
+            self::newsletter($reader, 81, 419, 'Sample headline from the latest filed briefing', $newsStop),
             self::apiKey('EMMA Aerospace Consulting', 'ssa_live_sample_not_a_real_key', 10000, false),
             self::complimentary($reader, now('UTC')->addYear()->format('F j, Y')),
         ];
