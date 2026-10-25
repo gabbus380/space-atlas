@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Laravel Cloud terminates TLS at its load balancer
         $middleware->trustProxies(at: '*');
         // Paddle webhooks are signed, not CSRF-protected
-        $middleware->preventRequestForgery(except: ['paddle/*', 'email/preferences/*']);
+        $middleware->preventRequestForgery(except: ['paddle/*', 'email/preferences/*', 'login/*/callback']);
         $middleware->appendToGroup('web', AtlasHeaders::class);
         $middleware->redirectGuestsTo('/login');
         $middleware->redirectUsersTo('/account');

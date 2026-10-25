@@ -121,10 +121,11 @@ class AccountController extends Controller
 
     public function password(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', Password::defaults()],
-        ]);
+        $rules = ['password' => ['required', 'confirmed', Password::defaults()]];
+        if ($request->user()->password) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+        $data = $request->validate($rules);
         $request->user()->forceFill(['password' => $data['password']])->save();
 
         return back()->with('status', 'Password changed.');
@@ -151,7 +152,9 @@ class AccountController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate(['password' => ['required', 'current_password']]);
+        if ($request->user()->password) {
+            $request->validate(['password' => ['required', 'current_password']]);
+        }
         $u = $request->user();
         foreach (['personal', 'teams'] as $plan) {
             $s = Billing::subscriptionFor($u, $plan);

@@ -57,7 +57,8 @@ class AtlasController extends Controller
     public function audio(Request $request, string $file): BinaryFileResponse
     {
         abort_unless(preg_match('/^brief_\d{4}-\d{2}-\d{2}\.mp4$/', $file), 404);
-        abort_unless(Plans::features(Plans::tier($request->user()))['audio'], 403);
+        $demo = app(AtlasData::class)->demoAudioFile();
+        abort_unless($file === $demo || Plans::features(Plans::tier($request->user()))['audio'], 403);
         $path = config('atlas.audio_path').'/'.$file;
         abort_unless(is_file($path), 404);
 

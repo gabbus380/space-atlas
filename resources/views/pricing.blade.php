@@ -157,7 +157,7 @@
       <div>
         <p class="eyebrow" style="margin:0">Operator</p>
         <strong>EMMA Aerospace Consulting LLP</strong>
-        <span>LL03251 · Richmond, British Columbia. EMMA provides Sovereign Space ATLAS.</span>
+        <span>Richmond, BC, Canada. EMMA provides Sovereign Space ATLAS.</span>
       </div>
     </article>
     <article>

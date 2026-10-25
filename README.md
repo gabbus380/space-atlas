@@ -1,7 +1,7 @@
 # Sovereign Space ATLAS on Laravel Cloud
 
 Production address: https://atlas.emmaconsulting.space
-Operator: EMMA Aerospace Consulting LLP (British Columbia, LL03251)
+Operator: EMMA Aerospace Consulting LLP, Richmond, BC, Canada. The registration number and street address are only on the legal page.
 
 A Laravel 13 application that serves the atlas, its accounts and plans, Paddle billing, Teams and the API.
 

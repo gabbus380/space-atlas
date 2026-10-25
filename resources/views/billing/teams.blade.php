@@ -40,7 +40,7 @@
       <img src="/apple-touch-icon.png" width="44" height="44" alt="EMMA Aerospace Consulting">
       <div>
         <strong>EMMA Aerospace Consulting LLP</strong>
-        <span>LL03251 · Richmond, BC</span>
+        <span>Richmond, BC, Canada</span>
       </div>
     </div>
     <div class="logo-well"><img src="/brand/paddle.svg" width="140" height="41" alt="Paddle"></div>
