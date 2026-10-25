@@ -138,7 +138,7 @@
   function P(k, d) { var p = (E().prices || {})[k]; return p == null ? d : p; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function n(k, d) { return CNT[k] == null ? d : CNT[k]; }
-  var KEY = { projects: "programs", programs: "programs", eco: "eco", engagements: "engagements", brief: "brief", files: "files" };
+  var KEY = { projects: "programs", programs: "programs", eco: "eco", engagements: "engagements", brief: "brief", files: "files", compare: "compare" };
   function locked(name) { return !F()[KEY[name] || name]; }
   function lockSvg() { return '<svg class="lk-ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5.2a2.5 2.5 0 015 0V7" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'; }
 
@@ -164,6 +164,11 @@
       return card("Personal and Teams", n("orgs", 419) + " organizations, mapped by capability.",
         '<p class="lk-p">The ecosystem registry covers ' + esc(n("orgCountries", 11)) + " countries from Central Europe to Central Asia, with " + esc(n("engagements", 89)) + " dated engagements between companies and governments.</p>" +
         list(["Agencies, industry, research and universities by segment", "A competency matrix for every country", "Company engagements typed by stage and linked to the source"]));
+    },
+    compare: function () {
+      return card("Personal and Teams", "Compare countries side by side.",
+        '<p class="lk-p">Compare is part of a paid plan. The open atlas profiles the 18 leading national programs and leaves the full comparison table closed.</p>' +
+        list(["Every profiled country, not only the leading 18", "GDP, defense, R&D and space budget per capita", "ESA CM25 subscriptions, operational satellites, flight-ready astronauts and term elapsed", "Programs, ecosystem organizations and tracker entries"]));
     }
   };
   function wall(view) {
@@ -258,7 +263,7 @@
       h += '<a class="acct-me" href="' + esc(U("account", "account")) + '" title="' + esc(((e.user || {}).name || "Account") + (e.team ? " · " + e.team.name : "")) + '" aria-label="Your account">' + esc(initials((e.user || {}).name).toUpperCase() || "•") + "</a>";
     }
     box.innerHTML = h;
-    ["projects", "eco"].forEach(function (v) {
+    ["projects", "eco", "compare"].forEach(function (v) {
       var tab = document.getElementById("tab-" + v); if (!tab) return;
       var ic = tab.querySelector(".lk-ic");
       if (locked(v)) { if (!ic) tab.insertAdjacentHTML("beforeend", lockSvg()); tab.title = "Part of Personal and Teams"; }
@@ -286,7 +291,7 @@
       send("POST", U("scope", "app/watchlist/scope"), { scope: s.dataset.lkScope }).then(function (j) { setEnt(j.ent); return reload(); }).catch(function () {});
     }
   });
-  document.addEventListener("atlas:ent", function () { header(); wall("projects"); wall("eco"); });
+  document.addEventListener("atlas:ent", function () { header(); wall("projects"); wall("eco"); wall("compare"); });
 
   window.ATLAS_LOCK = {
     locked: locked,
@@ -294,7 +299,8 @@
     cfile: cfile, brief: brief, prompt: prompt
   };
   window.ATLAS_ACCT = { focusHead: focusHead, header: header };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", header); else header();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootLocks); else bootLocks();
+  function bootLocks() { header(); wall("projects"); wall("eco"); wall("compare"); }
 })();
 
 </script>
@@ -1744,6 +1750,7 @@ const METRICS = [
   {id:"sats", label:"Operational satellites", get:c=>c.sats && c.sats.count, fmt:fInt, tf:"log"}
 ];
 const MBY = {}; METRICS.forEach(m => MBY[m.id] = m);
+["space_pct","space_pc","gdp","def_pct","def_usd","gerd","cm25","esa_contrib","elec_cycle","eco","proj","ready","sats"].forEach(id => { const i = METRICS.findIndex(m => m.id === id); if (i >= 0) METRICS.splice(i, 1); delete MBY[id]; });
 const RAMP = d3.interpolateRgbBasis(["#141d30","#203252","#34507a","#5a77a1","#a5b6cf","#efd9a4"]);
 const DIV = d3.interpolateRgbBasis(["#e0675a","#7a4a48","#263347","#3d5f8c","#9fb7d9"]);
 const CYC = d3.interpolateRgbBasis(["#213353","#36507a","#8fb0e0","#d9a55b","#e5bf6d"]);
@@ -1777,7 +1784,7 @@ const state = {
   bMode: store.get("bMode", "read"),
   subs: true, caps: store.get("caps", true), hubs: store.get("hubs", true), subSel: null
 };
-if (!MBY[state.metric]) state.metric = "space_usd";
+if (!MBY[state.metric]) { state.metric = "space_usd"; store.set("metric", "space_usd"); }
 if (!R.find(r => r.id === state.region)) state.region = "world";
 
 /* ---------------- focus countries: editable, shared through the page database (config/focus) so the morning run follows them ---------------- */
@@ -2114,12 +2121,9 @@ function renderOverview(){
     <span class="eyebrow">Regional overview${fl.groups ? " · " + esc(fl.groups) : ""}</span>
     <h2>${esc(fl.region)}</h2>
     <div class="kpis">
-      <div class="kpi"><span>Countries</span><b>${list.length}</b><small>${core.length} with full profiles</small></div>
+      <div class="kpi"><span>Countries</span><b>${list.length}</b><small>The 18 leading national programs</small></div>
       <div class="kpi"><span>Space budgets</span><b>${fUsdM(sp.s || null)}</b><small>Sum of ${sp.n} reported</small></div>
-      <div class="kpi"><span>Combined GDP</span><b>${fUsdB(gdp.s || null)}</b><small>${esc(A.meta.gdpShort || "IMF")}</small></div>
-      <div class="kpi"><span>Defense, % GDP</span><b>${defW == null ? "n/a" : defW.toFixed(2) + "%"}</b><small>GDP-weighted</small></div>
       <div class="kpi"><span>Astronauts flown</span><b>${flown.s}</b><small>Nationals, all eras</small></div>
-      <div class="kpi"><span>Flight-ready pool</span><b>${ready.s}</b><small>${cm.n ? "ESA CM25 " + fEurM(cm.s) : "Trained or assigned, unflown"}</small></div>
     </div>
   </div>
   ${m.tf === "cat" && m.month ? budgetWindowsHtml(list) : m.id === "elec_next" ? (electionsAheadHtml(list) || `<div class="sec"><div class="empty">No national election inside 12 months in this selection.</div></div>`) : `<div class="sec">
@@ -2206,19 +2210,12 @@ function renderDossier(){
   }
   if (!c.core){
     h += `<div class="sec"><div class="figs">${fig("GDP", fUsdB(c.gdp), c.gdpNote || "")}${fig("Population", fPop(c.pop), "")}</div>
-      <p class="prose">No detailed space profile for this country yet. Membership filters and GDP still apply.</p></div>` + countryFileTeaser(c) + polHtml(c) + bhDossierHtml(c) + projDossierHtml(c) + ecoHtml(c);
+      <p class="prose">No detailed space profile for this country yet.</p></div>` + countryFileTeaser(c) + polHtml(c);
     $("#panel").innerHTML = h; wireDossier(c); return;
   }
   h += `<div class="sec"><h4 class="eyebrow">Key figures</h4><div class="figs">
     ${fig("Space budget", fUsdM(sp.usd), sp.usd != null ? [sp.tag, sp.year, sp.conf ? sp.conf + " confidence" : ""].filter(Boolean).join(" \u00B7 ") : "No public figure", sp.usd == null)}
-    ${fig("Space, % of GDP", c.spacePct == null ? "n/a" : c.spacePct.toFixed(3) + "%", c.spacePc != null ? "$" + (c.spacePc < 10 ? c.spacePc.toFixed(2) : Math.round(c.spacePc)) + " per capita" : "", c.spacePct == null)}
-    ${fig("GDP", fUsdB(c.gdp), (c.gdpNote || c.gdpYear || "") + (c.pop ? " \u00B7 pop " + fPop(c.pop) : ""), c.gdp == null)}
-    ${fig("Defense", c.defPct == null ? "n/a" : c.defPct.toFixed(1) + "% of GDP", c.defStale ? "Latest SIPRI figure is from " + c.defStale : (c.def != null ? fUsdB(c.def) + " " : "") + (c.natoPct != null ? "· NATO est. " + c.natoPct.toFixed(2) + "%" : ""), c.defPct == null)}
-    ${fig("R&D, % of GDP", fPct(c.gerd, 2), c.gerdYear ? String(c.gerdYear) : "", c.gerd == null)}
-    ${fig("Satellites", fInt(c.sats && c.sats.count), c.launch ? "Launch: " + c.launch : "", !(c.sats && c.sats.count != null))}
     ${e.status && e.status !== "none" ? fig("ESA status", cap(e.status), e.since ? "since " + e.since : "") : fig("ESA status", "None", "", true)}
-    ${fig("ESA CM25", fEurM(e.cm25), e.cm22 != null ? "CM22 " + fEurM(e.cm22) + (e.cm25 && e.cm22 ? ", " + (e.cm25/e.cm22 >= 1 ? "+" : "") + Math.round((e.cm25/e.cm22 - 1)*100) + "%" : "") : "", e.cm25 == null)}
-    ${fig("ESA contribution", fEurM(e.contrib), e.contribYear ? String(e.contribYear) : "", e.contrib == null)}
   </div>${sp.scope ? `<p class="prose" style="font-size:12px">Budget scope: ${esc(String(sp.scope).replace(/\.\s*$/,""))}.${sp.note ? " " + esc(sp.note) : ""}</p>` : ""}</div>`;
   if (idx){
     const parts = [["Budget scale","budget",30],["Budget intensity","intensity",10],["Human spaceflight","hsf",25],["Institutions","inst",15],["Capability","cap",20]];
@@ -2230,10 +2227,8 @@ function renderDossier(){
     ${c.hsfNote ? `<p class="prose">${esc(c.hsfNote)}</p>` : ""}
     <span class="eyebrow" style="margin-top:4px">Flown · ${c.flownCount || 0}</span>
     ${c.flown && c.flown.length ? `<div class="people">${c.flown.map(p => `<div class="person"><div>${esc(p.name)}<small>${esc(p.mission || "")}${p.type === "suborbital" ? " · suborbital" : ""}</small></div><span class="yr">${esc(p.first_flight_year || "")}</span></div>`).join("")}</div>` : `<div class="empty">No national has flown.</div>`}
-    <span class="eyebrow" style="margin-top:6px">Flight-ready and candidates · ${(c.ready||[]).length}</span>
-    ${c.ready && c.ready.length ? `<div class="people">${c.ready.map(p => `<div class="person"><div>${esc(p.name)}<small>${esc([p.status, p.note].filter(Boolean).join(". "))}</small></div><span></span></div>`).join("")}</div>` : `<div class="empty">No announced candidates.</div>`}
   </div>`;
-  h += countryFileTeaser(c) + bhDossierHtml(c) + polHtml(c) + projDossierHtml(c) + ecoHtml(c);
+  h += countryFileTeaser(c) + polHtml(c);
   const ag = c.agency || {};
   if (ag.name){
     h += `<div class="sec"><h4 class="eyebrow">Agency</h4><div class="person" style="border:0"><div><b style="font-weight:600">${esc(ag.name)}${ag.abbr ? " (" + esc(ag.abbr) + ")" : ""}</b><small>${esc([ag.parent, ag.established ? "est. " + ag.established : ""].filter(Boolean).join(" · "))}</small></div><span></span></div>
@@ -2653,6 +2648,7 @@ const COLS = [
   {k:"flown"}, {k:"ready"}, {k:"sats"}, {k:"index"}
 ].map(col => col.get ? col : Object.assign({l:MBY[col.k].label.replace(/ \(.*\)/,"").replace(", best available",""), get:MBY[col.k].get, fmt:MBY[col.k].fmt}, col));
 function renderCompare(){
+  if (window.ATLAS_LOCK && window.ATLAS_LOCK.view("compare")) return;
   const list = filtered().filter(c => c.core || c.gdp != null);
   const fl = filterLabel();
   $("#cmpEyebrow").textContent = fl.groups ? fl.region + " · " + fl.groups : fl.region;
@@ -2946,7 +2942,7 @@ function polHtml(c){
       ${P.head_of_government && P.head_of_government !== P.head_of_state ? `<div class="person"><div>${esc(hog[0])}<small>${esc(hog[1] || "Head of government")}</small></div><span class="yr">GOV</span></div>` : ""}
       ${P.ruling ? `<div class="person"><div>${esc(P.ruling)}<small>Governing party or coalition${P.system ? " · " + esc(P.system) : ""}</small></div><span></span></div>` : ""}
     </div>
-    ${els.map(x => cycleBar(x, elType(x.type) + " cycle" + (d && x.e === d.e ? " · decides the executive" : ""))).join("")}
+    
     ${(P.elections || []).filter(e => !pDate(e.last) || !elInfo(e).next).map(e => `<p class="prose" style="font-size:12px">${esc(elType(e.type))}: last ${esc(fmtP(pDate(e.last)))}, next not scheduled.</p>`).join("")}
     ${!(P.elections || []).length ? `<p class="prose" style="font-size:12px">No competitive national elections.</p>` : ""}
     ${P.note ? `<p class="prose" style="font-size:12.5px">${esc(P.note)}</p>` : ""}
@@ -2967,8 +2963,6 @@ function electionsAheadHtml(list){
   add("el6", "National election within 6 months", "Within 6 months", c => { const n = nextAny(c); return !!(n && n.months <= 6); });
   add("el12", "National election within 12 months", "Within 12 months", c => { const n = nextAny(c); return !!(n && n.months <= 12); });
   add("el24", "National election within 24 months", "Within 24 months", c => { const n = nextAny(c); return !!(n && n.months <= 24); });
-  add("el_late", "Late in the executive term (75 percent or more elapsed)", "Late term", c => { const d = decisive(c); return !!(d && d.pct != null && d.pct >= 0.75); });
-  add("el_early", "Early in the executive term (25 percent or less elapsed)", "Early term", c => { const d = decisive(c); return !!(d && d.pct != null && d.pct <= 0.25); });
   add("el_none", "No competitive national vote scheduled", "No vote", c => elecBucket(c) === 0);
 })();
 
