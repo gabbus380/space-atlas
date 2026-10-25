@@ -91,7 +91,7 @@ footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:
       <a href="/pricing" @if(request()->is('pricing')) aria-current="page" @endif>Plans</a>
       @auth
         @if(auth()->user()->team_id)<a href="/team" @if(request()->is('team')) aria-current="page" @endif>Team</a>@endif
-        @if(auth()->user()->is_admin)<a href="/admin" @if(request()->is('admin')) aria-current="page" @endif>Admin</a>@endif
+        @if(auth()->user()->staffRole())<a href="/admin" @if(request()->is('admin*')) aria-current="page" @endif>Admin</a>@endif
         <a href="/account" @if(request()->is('account')) aria-current="page" @endif>Account</a>
       @else
         <a href="/login" @if(request()->is('login')) aria-current="page" @endif>Sign in</a>

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Support\Billing;
+use App\Support\OrganizationDirectory;
 use App\Support\Plans;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -36,10 +38,63 @@ class AccountController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'organization' => ['nullable', 'string', 'max:160'],
+            'organization_id' => ['nullable', 'string', 'max:160'],
+            'job_title' => ['nullable', 'string', 'max:160'],
         ]);
-        $request->user()->forceFill($data + ['marketing_opt_in' => $request->boolean('marketing')])->save();
+        $user = $request->user();
+        $name = trim((string) ($data['organization'] ?? ''));
+        $claim = null;
 
-        return back()->with('status', 'Profile saved.');
+        if ($request->boolean('keep_unmatched')) {
+            $claim = null;
+        } elseif ($request->filled('organization_id')) {
+            $claim = OrganizationDirectory::find($data['organization_id']);
+            if (! $claim) {
+                return back()->withErrors(['organization' => 'That organization is not in the directory.'])->withInput();
+            }
+        } elseif ($name !== '' && ! $request->boolean('keep_unmatched')) {
+            $matches = OrganizationDirectory::search($name);
+            $exact = array_values(array_filter($matches, fn ($org) => OrganizationDirectory::normalize($org['name'] ?? '') === OrganizationDirectory::normalize($name)));
+            if (count($exact) === 1) {
+                $claim = $exact[0];
+            } elseif (count($matches) > 1) {
+                return back()->with('org_matches', $matches)->withInput();
+            }
+        }
+
+        if ($claim) {
+            $errors = OrganizationDirectory::claimErrors($claim, $user, $data['job_title'] ?? null);
+            if ($errors !== []) {
+                return back()->withErrors($errors)->with('org_matches', [$claim])->withInput();
+            }
+        }
+
+        $user->forceFill([
+            'name' => $data['name'],
+            'organization' => $claim['name'] ?? ($name !== '' ? $name : null),
+            'organization_id' => $claim['id'] ?? null,
+            'job_title' => $claim ? trim((string) ($data['job_title'] ?? '')) : null,
+            'show_on_organization' => $claim ? $request->boolean('show_on_organization') : false,
+            'marketing_opt_in' => $request->boolean('marketing'),
+        ])->save();
+
+        $status = $claim
+            ? 'Profile saved. '.$claim['name'].' is linked to this account.'
+            : 'Profile saved.';
+
+        return back()->with('status', $status);
+    }
+
+    public function coupon(Request $request): RedirectResponse
+    {
+        $code = strtoupper(trim((string) $request->validate(['code' => ['required', 'string', 'max:40']])['code']));
+        $coupon = Coupon::query()->where('code', $code)->first();
+        if (! $coupon) {
+            return back()->withErrors(['code' => 'No coupon uses that code.']);
+        }
+        $coupon->redeem($request->user());
+
+        return back()->with('status', $coupon->label().' is applied to your account.');
     }
 
     public function password(Request $request): RedirectResponse

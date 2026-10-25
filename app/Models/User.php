@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Staff;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -27,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'show_on_organization' => 'boolean',
             'marketing_opt_in' => 'boolean',
             'terms_accepted_at' => 'datetime',
             'team_joined_at' => 'datetime',
@@ -68,5 +70,23 @@ class User extends Authenticatable implements MustVerifyEmail
     public function firstName(): string
     {
         return explode(' ', trim($this->name))[0] ?: $this->name;
+    }
+
+    /** Admin, manager, sales, or data analyst. Older rows used only is_admin. */
+    public function staffRole(): ?string
+    {
+        if (in_array($this->staff_role, array_keys(Staff::ROLES), true)) {
+            return $this->staff_role;
+        }
+
+        return $this->is_admin ? Staff::ADMIN : null;
+    }
+
+    public function assignStaffRole(?string $role): void
+    {
+        $this->forceFill([
+            'staff_role' => $role,
+            'is_admin' => $role !== null,
+        ])->save();
     }
 }

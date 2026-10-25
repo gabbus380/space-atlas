@@ -107,6 +107,17 @@ Then switch to the live keys and prices.
 
 ## Operating
 
+Staff roles on `/admin`:
+
+| Role | What they can do |
+|---|---|
+| Admin | Everything, including Paddle and AI connectors |
+| Manager | Everything except those connectors |
+| Sales | Users, teams, organizations, withdrawals, and coupons |
+| Data analyst | The organization directory |
+
+A reader who names an organization from the directory must use a company email address and give their title. They can choose whether that name and title are shown on the organization. Coupon codes (1 month, 3 months, or the first year free) are created in the admin and entered on the account page.
+
 | Task | How |
 |---|---|
 | Teams pilot, or a team that pays by invoice | `/admin`, Team pilot: owner email, seats, days |

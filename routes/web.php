@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\AccessController;
+use App\Http\Controllers\Admin\DirectoryController;
+use App\Http\Controllers\Admin\PeopleController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AtlasController;
 use App\Http\Controllers\Auth\LoginController;
@@ -10,7 +14,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WithdrawalController;
-use App\Http\Middleware\EnsureAdmin;
+use App\Http\Middleware\EnsureStaff;
 use Illuminate\Support\Facades\Route;
 
 // public pages
@@ -52,6 +56,7 @@ Route::middleware('auth')->group(function () {
     // account
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::post('/account/profile', [AccountController::class, 'profile'])->name('account.profile');
+    Route::post('/account/coupon', [AccountController::class, 'coupon'])->name('account.coupon');
     Route::post('/account/password', [AccountController::class, 'password'])->name('account.password');
     Route::get('/account/export', [AccountController::class, 'export'])->name('account.export');
     Route::post('/account/delete', [AccountController::class, 'destroy'])->name('account.delete');
@@ -78,13 +83,47 @@ Route::middleware('auth')->group(function () {
     Route::post('/team/name', [TeamController::class, 'rename'])->name('team.rename');
     Route::post('/team/leave', [TeamController::class, 'leave'])->name('team.leave');
 
-    // EMMA only
-    Route::middleware(EnsureAdmin::class)->prefix('admin')->group(function () {
+    // EMMA staff. Each ability returns 404 to the roles that do not have it.
+    Route::middleware(EnsureStaff::class.':dashboard')->prefix('admin')->group(function () {
         Route::get('/', [AdminController::class, 'show'])->name('admin');
-        Route::post('/grant', [AdminController::class, 'grant'])->name('admin.grant');
-        Route::post('/team-grant', [AdminController::class, 'teamGrant'])->name('admin.teamGrant');
-        Route::post('/revoke', [AdminController::class, 'revoke'])->name('admin.revoke');
-        Route::post('/api-keys', [AdminController::class, 'issueKey'])->name('admin.keys');
-        Route::post('/api-keys/{key}/toggle', [AdminController::class, 'toggleKey'])->name('admin.keys.toggle');
+
+        Route::middleware(EnsureStaff::class.':customers')->group(function () {
+            Route::get('/users', [PeopleController::class, 'users'])->name('admin.users');
+            Route::get('/users/{user}', [PeopleController::class, 'user'])->name('admin.users.show');
+            Route::post('/users/{user}/grant', [PeopleController::class, 'grant'])->name('admin.users.grant');
+            Route::post('/users/{user}/revoke', [PeopleController::class, 'revoke'])->name('admin.users.revoke');
+            Route::post('/users/{user}/verify', [PeopleController::class, 'verify'])->name('admin.users.verify');
+            Route::delete('/users/{user}', [PeopleController::class, 'destroy'])->name('admin.users.destroy');
+            Route::get('/teams', [PeopleController::class, 'teams'])->name('admin.teams');
+            Route::get('/teams/{team}', [PeopleController::class, 'team'])->name('admin.teams.show');
+            Route::post('/teams/{team}/grant', [PeopleController::class, 'teamGrant'])->name('admin.teams.grant');
+            Route::post('/teams/{team}/revoke', [PeopleController::class, 'teamRevoke'])->name('admin.teams.revoke');
+            Route::get('/withdrawals', [PeopleController::class, 'withdrawals'])->name('admin.withdrawals');
+            Route::post('/withdrawals/{withdrawal}', [PeopleController::class, 'withdrawal'])->name('admin.withdrawals.update');
+            Route::get('/coupons', [AccessController::class, 'coupons'])->name('admin.coupons');
+            Route::post('/coupons', [AccessController::class, 'storeCoupon'])->name('admin.coupons.store');
+            Route::post('/coupons/{coupon}/toggle', [AccessController::class, 'toggleCoupon'])->name('admin.coupons.toggle');
+        });
+
+        Route::middleware(EnsureStaff::class.':roles')->group(function () {
+            Route::post('/users/{user}/role', [PeopleController::class, 'role'])->name('admin.users.role');
+        });
+
+        Route::middleware(EnsureStaff::class.':keys')->group(function () {
+            Route::get('/api-keys', [AccessController::class, 'keys'])->name('admin.keys');
+            Route::post('/api-keys', [AccessController::class, 'issueKey'])->name('admin.keys.store');
+            Route::post('/api-keys/{key}/toggle', [AccessController::class, 'toggleKey'])->name('admin.keys.toggle');
+        });
+
+        Route::middleware(EnsureStaff::class.':settings')->group(function () {
+            Route::get('/connectors', [SettingsController::class, 'edit'])->name('admin.connectors');
+            Route::post('/connectors', [SettingsController::class, 'update'])->name('admin.connectors.update');
+        });
+
+        Route::middleware(EnsureStaff::class.':data')->group(function () {
+            Route::get('/directory', [DirectoryController::class, 'index'])->name('admin.directory');
+            Route::get('/directory/{org}', [DirectoryController::class, 'edit'])->where('org', '.*')->name('admin.directory.edit');
+            Route::post('/directory/{org}', [DirectoryController::class, 'update'])->where('org', '.*')->name('admin.directory.update');
+        });
     });
 });
