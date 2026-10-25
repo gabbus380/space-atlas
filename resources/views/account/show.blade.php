@@ -57,6 +57,10 @@
         <p class="muted" style="margin:0">Complimentary Personal access from EMMA Aerospace Consulting, until {{ $user->override_until->format('F j, Y') }}.</p>
       @endif
 
+      @if ($tier === 'personal' && ! ($team && $team->owner_id !== $user->id))
+        <div class="up"><span>Convert this Personal account into a Teams account so colleagues can share a watchlist, notes and one invoice.</span><a class="btn gold sm" href="/subscribe/teams?interval=year">Convert to Teams</a></div>
+      @endif
+
       @if ($team)
         <div class="stack" style="gap:8px">
           <p style="margin:0">You are {{ $team->owner_id === $user->id ? 'the owner' : 'a member' }} of <strong>{{ $team->name }}</strong>@if(! $team->isActive()) <span class="pill red">Not active</span>@endif.</p>

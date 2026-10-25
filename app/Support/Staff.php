@@ -51,6 +51,7 @@ class Staff
             $links['/admin/teams'] = 'Teams';
             $links['/admin/withdrawals'] = 'Withdrawals';
             $links['/admin/coupons'] = 'Coupons';
+            $links['/admin/api-requests'] = 'API requests';
         }
         if (self::allows($user, 'keys')) {
             $links['/admin/api-keys'] = 'API keys';

@@ -24,7 +24,7 @@
 
 <div class="grid2" style="margin-top:28px;align-items:start">
   <section class="card stack"><h2 class="h3">Where to work</h2>
-    <p class="muted" style="margin:0">Users, teams, withdrawals and coupons are for admin, manager and sales. API keys are for admin and manager. The directory is for admin, manager and data analysts. Paddle and AI connectors are admin only.</p>
+    <p class="muted" style="margin:0">Users, teams, API requests, withdrawals and coupons are for admin, manager and sales. API keys are for admin and manager. The directory is for admin, manager and data analysts. Paddle and AI connectors are admin only.</p>
   </section>
   <div class="stack">
     <section class="card stack"><h2 class="h3">Country files opened by free accounts this month</h2>

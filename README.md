@@ -122,7 +122,7 @@ A reader who names an organization from the directory must use a company email a
 |---|---|
 | Teams pilot, or a team that pays by invoice | `/admin`, Team pilot: owner email, seats, days |
 | Complimentary Personal (press, partners) | `/admin` or `php artisan atlas:admin grant someone@org.com --days=90` |
-| API customer after the Order Form is signed | `/admin`, Issue an API key (shown once), or `php artisan atlas:admin api-key contact@org.com --name="Org"` |
+| API customer after the Order Form is signed | `/admin/api-requests`, then issue the key, or `php artisan atlas:admin api-key contact@org.com --name="Org"` |
 | Refund under the 14-day guarantee | Paddle dashboard, Transactions, Refund |
 | Withdrawals | Arrive by email to `ATLAS_CONTACT` and are stored in the `withdrawals` table |
 | KPIs | `/admin` or `php artisan atlas:admin kpi` |

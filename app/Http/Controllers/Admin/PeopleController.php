@@ -111,6 +111,30 @@ class PeopleController extends Controller
         return redirect('/admin/users')->with('status', $email.' is deleted.');
     }
 
+    public function convertToTeam(Request $request, User $user): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'seats' => ['required', 'integer', 'min:'.config('atlas.teams_min_seats'), 'max:'.config('atlas.teams_max_seats')],
+            'days' => ['required', 'integer', 'min:1', 'max:800'],
+        ]);
+        if ($user->team_id && $user->team?->owner_id !== $user->id) {
+            return back()->withErrors(['name' => $user->email.' is a member of '.$user->team->name.'. Remove them from that team first.']);
+        }
+        $team = $user->ownedTeam ?: Team::create(['name' => $data['name'], 'owner_id' => $user->id]);
+        $team->forceFill([
+            'name' => $data['name'],
+            'override_until' => today()->addDays($data['days']),
+            'override_seats' => $data['seats'],
+        ])->save();
+        $user->forceFill([
+            'team_id' => $team->id,
+            'team_joined_at' => $user->team_joined_at ?? now(),
+        ])->save();
+
+        return back()->with('status', $user->email.' now owns '.$team->name.' with '.$data['seats'].' seats until '.$team->override_until->format('F j, Y').'.');
+    }
+
     public function teams(): View
     {
         return view('admin.teams.index', [
