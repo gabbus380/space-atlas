@@ -81,9 +81,9 @@ class AtlasAccessTest extends TestCase
         $j = $r->json();
         $this->assertCount(1, $j['collections']['briefings']);
         $b = array_values($j['collections']['briefings'])[0];
-        $this->assertTrue($b['locked']);
-        $this->assertArrayNotHasKey('global', $b);
-        $this->assertArrayNotHasKey('audio', $b);
+        $this->assertTrue($b['demo']);
+        $this->assertArrayHasKey('global', $b);
+        $this->assertArrayNotHasKey('locked', $b);
         foreach ($j['collections']['country'] as $doc) {
             $this->assertTrue($doc['locked']);
             $this->assertArrayNotHasKey('stakeholders', $doc);
@@ -232,8 +232,12 @@ class AtlasAccessTest extends TestCase
     {
         $file = collect(scandir(config('atlas.audio_path')))->first(fn ($f) => str_ends_with($f, '.mp4'));
         $this->assertNotNull($file);
-        $this->get("/app/audio/$file")->assertStatus(403);
-        $this->actingAs(User::factory()->create())->get("/app/audio/$file")->assertStatus(403);
+        $demo = app(AtlasData::class)->demoAudioFile();
+        $this->get('/app/audio/brief_2000-01-01.mp4')->assertStatus(403);
+        if ($demo && is_file(config('atlas.audio_path').'/'.$demo)) {
+            $this->get('/app/audio/'.$demo)->assertOk();
+        }
+        $this->actingAs(User::factory()->create())->get('/app/audio/brief_2000-01-01.mp4')->assertStatus(403);
         $this->actingAs($this->personal())->get("/app/audio/$file")->assertOk();
         $this->get('/app/audio/..%2F.env')->assertStatus(404);
     }

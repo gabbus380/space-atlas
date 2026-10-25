@@ -108,7 +108,10 @@ class AccountsTest extends TestCase
     public function test_account_page_and_export(): void
     {
         $u = User::factory()->create();
-        $this->actingAs($u)->get('/account')->assertOk()->assertSee('Free account');
+        $this->actingAs($u)->get('/account')->assertOk()
+            ->assertSee('You are on the Free account')
+            ->assertSee('Personal')
+            ->assertSee('Teams');
         $this->get('/account/export')->assertOk()->assertJsonPath('account.email', $u->email);
     }
 

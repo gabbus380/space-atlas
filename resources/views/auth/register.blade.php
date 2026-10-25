@@ -19,6 +19,7 @@
     <label class="check"><input type="checkbox" name="marketing" value="1" @checked(old('marketing'))> <span>Send me the monthly note about the atlas from EMMA Aerospace Consulting. You can unsubscribe at any time.</span></label>
     <div class="row"><button class="btn gold" type="submit">Create account</button></div>
   </form>
+  @include('auth.providers')
   <p class="muted" style="margin:0">Already have an account? <a href="/login">Sign in</a>.</p>
 </div>
 @endsection

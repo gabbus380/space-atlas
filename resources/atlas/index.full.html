@@ -1498,7 +1498,7 @@ h2,.map-title h2,.b-head h2,.sec h2,h2.dh,.e-head h2,.cmp-bar h2,.modal header h
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5l1.6 4.1 4.4.3-3.4 2.8 1.1 4.3L8 10.6 4.3 13l1.1-4.3L2 5.9l4.4-.3z"/></svg>
         <span class="lbl">Ask the atlas</span>
       </button>
-      <div class="clocks" aria-live="off"><div class="clock"><b class="num" id="clk">--:--:--</b><span id="nextBrief">Budapest</span></div><div class="clock utc"><b class="num" id="clkUtc">--:--:--</b><span>UTC</span></div></div>
+      <div class="clocks" aria-live="off"><div class="clock"><b class="num" id="clk">--:--:--</b><span id="nextBrief">Local</span></div><div class="clock utc"><b class="num" id="clkUtc">--:--:--</b><span>UTC</span></div></div>
       <button class="icon-btn" id="fsBtn" type="button" title="Full screen (F)" aria-label="Toggle full screen">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/></svg>
       </button>
@@ -1715,7 +1715,7 @@ function fPop(v){ return v == null ? "n/a" : (v >= 100 ? Math.round(v) : v.toFix
 /* ---------------- budget calendar ---------------- */
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MONL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-function budNow(){ try{ return +new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Budapest",month:"numeric"}).format(new Date()); }catch(e){ return new Date().getMonth()+1; } }
+function budNow(){ return new Date().getMonth() + 1; }
 function inWin(w, m){ if (!w || !w[0] || !w[1]) return false; return w[0] <= w[1] ? (m >= w[0] && m <= w[1]) : (m >= w[0] || m <= w[1]); }
 function monthsUntil(from, to){ return ((to - from) % 12 + 12) % 12; }
 function winStatus(c, m){
@@ -2265,7 +2265,7 @@ function renderDossier(){
 const DOMS = ["Human spaceflight","LEO infrastructure","Payloads and research","Ground and data","Electronics","Life sciences","Training"];
 function ecoEntities(c){
   return orgsFor(c.iso3).map(o => ({ id:o.id, tier:o.tier === "key" || o.tier === "priority" ? "P" : "D", name:o.name, cat:o.category, type:o.type, desc:o.desc, ax:o.axiom, conf:o.conf, d:o.domains || [], rel:o.rel || [] }))
-    .sort((a,b) => (a.tier === b.tier ? 0 : a.tier === "P" ? -1 : 1) || ((b.ax ? 1 : 0) - (a.ax ? 1 : 0)) || a.name.localeCompare(b.name));
+    .sort((a,b) => (a.tier === b.tier ? 0 : a.tier === "P" ? -1 : 1) || a.name.localeCompare(b.name, "en", { sensitivity:"base" }));
 }
 function ecoHtml(c){
   const e = c.eco || {};
@@ -2337,7 +2337,7 @@ function newsIsos(){ const s = new Set(); briefItems().forEach(it => (it.iso3||[
 
 function renderTicker(){
   const items = state.brief ? [].concat((state.brief.global||[]).map(i=>["GLOBAL",i]), (state.brief.countries||[]).flatMap(cb => (cb.items||[]).map(i => [cb.iso3, i])), (state.brief.regions||[]).flatMap(r => (r.items||[]).slice(0,2).map(i => [r.name.split(" ")[0].toUpperCase(), i]))) : [];
-  $("#tickLab").textContent = state.brief ? fmtDate(state.brief.date, {weekday:"short", day:"numeric", month:"short"}) : "Today";
+  $("#tickLab").textContent = state.brief ? ((state.brief.demo ? "Demo · " : "") + fmtDate(state.brief.date, {weekday:"short", day:"numeric", month:"short"})) : "Today";
   if (!items.length && state.brief && state.brief.locked){ $("#track").innerHTML = `<button type="button" data-b="1"><b>Headline</b>${esc(state.brief.headline || "")}</button>`; $("#track").style.animation = "none"; return; }
   if (!items.length){
     $("#track").innerHTML = `<button type="button" data-b="1">No briefing filed yet. The edition lands by 06:00 UTC.</button>`;
@@ -2371,7 +2371,7 @@ function renderBriefing(){
   const raMain = mode === "read" ? raHtml(b) : "";
   side.innerHTML = `
     <div><span class="eyebrow">Daily briefing · ${esc(b.edition || "06:00 UTC")}</span><div class="b-date">${esc(fmtDate(b.date, {weekday:"long", month:"long", day:"numeric"}))}</div>
-    <span class="muted" style="font-size:11.5px">Filed ${b.generated_at ? esc(new Date(b.generated_at).toISOString().slice(11, 16)) + " UTC" : ""}${b.stats && b.stats.sources ? " · " + b.stats.sources + " sources" : ""}</span><span class="muted" style="display:block;font-size:11.5px;margin-top:4px">AI-generated from cited public sources and published without prior human review. The narration is a synthetic voice.</span></div>
+    <span class="muted" style="font-size:11.5px">Filed ${b.generated_at ? esc(new Date(b.generated_at).toISOString().slice(11, 16)) + " UTC" : ""}${b.stats && b.stats.sources ? " · " + b.stats.sources + " sources" : ""}</span><span class="muted" style="display:block;font-size:11.5px;margin-top:4px">AI-generated from cited public sources and published without prior human review. The narration is a synthetic voice.</span>${b.demo ? `<span class="muted" style="display:block;font-size:11.5px;margin-top:4px">Demo edition for this month. Everyone can read it and play it. Personal and Teams receive a new edition every morning, with the archive.</span>` : ""}</div>
     ${playerHtml(b)}
     ${mode === "read" && RA.data ? `<div><span class="eyebrow">Standard flow</span>${raTocHtml()}</div>` : `<nav class="toc">${secs.map(([id,l,n]) => `<a href="#${id}" data-jump="${id}">${esc(l)}<span>${n}</span></a>`).join("")}</nav>`}
     ${runBtn}
@@ -2444,7 +2444,7 @@ function crossRefs(b, iso){
   (b.milestones||[]).forEach(m => { if ((m.iso3||[]).includes(iso)) out.push({ t:m.event, w:"Milestone " + whenTxt(m.date), j:"" }); });
   return out;
 }
-function budTime(iso){ try{ return new Date(iso).toLocaleTimeString("en-GB", {timeZone:"Europe/Budapest", hour:"2-digit", minute:"2-digit"}); }catch(e){ return ""; } }
+function budTime(iso){ try{ return new Date(iso).toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" }); }catch(e){ return ""; } }
 function wireBriefing(){
   $("#v-brief").onclick = e => {
     const go = e.target.closest("[data-go]"); if (go){ setView("atlas"); selectCountry(go.dataset.go, true); return; }
@@ -2788,7 +2788,7 @@ function renderAbout(){
     <h4>01 · Country data</h4><ul><li>Profiles compiled ${esc(m.built)} from public sources. Each figure carries its year. Where no public figure exists the page shows n/a rather than an estimate.</li><li>GDP and population: ${esc(m.gdpSource || "IMF World Economic Outlook")}. Defense: ${esc(m.defenseSource || "SIPRI")}. R&D: ${esc(m.gerdSource || "Eurostat, OECD and UNESCO")}.</li><li>Space budgets are tagged by scope (national budget, ESA share only, or government total estimate). Compare within a tag. ESA figures come from ESA budget and CM25 tables.</li><li>Memberships as of ${esc(m.groupsAsOf || "")} from official lists.</li></ul>
     <h4>02 · Country files</h4><p>For ${Object.keys(A.cfiles || {}).length} countries: the national space strategy, the government structure that decides space, and a map of the national space stakeholders. Each file shows its verification status. Any other country shows a baseline from its profile, and the page owner can request a research run that writes a sourced file into the page.</p>
     <h4>03 · States and cities</h4><p>All 50 US states plus the District of Columbia and all 16 German Länder, each with its capital, space office or cluster, state strategy and mapped space sites. The cities layer adds national capitals, state capitals and space hubs (launch sites, agency and mission centers, military space, industry and research). Locations are approximate.</p>
-    <h4>04 · Company Engagements</h4><p>Engagements between companies and governments: Axiom Space, Vast, Voyager and Starlab, SpaceX, Blue Origin, China, Russia, The Exploration Company and others. Each entry is dated, typed by stage and linked to its source.</p>
+    <h4>04 · Company Engagements</h4><p>Engagements between companies and governments. Each entry is dated, typed by stage and linked to its source. Companies are listed in alphabetical order.</p>
     <h4>05 · Programs and ecosystem</h4><p>${projAll().length} programs and consortia with members by role. The ecosystem registry lists ${allOrgs().length} organizations by segment and capability area and grows country by country.</p>
     <h4>06 · Daily briefing</h4><p>A neutral world space briefing filed every morning by 06:00 UTC, with decision status, exposure and next milestone for each item, a read-along transcript and a map mode that follows the narration across the atlas.</p>
     <h4>07 · Political calendar and capability index</h4><p>Heads of state and government, governing parties and election cycles for ${A.countries.filter(c => c.pol).length} countries. The capability index is a screening heuristic out of 100 built from the figures on this page, not an external ranking.</p>
@@ -2820,7 +2820,8 @@ function setView(v){
   dockUi();
 }
 document.querySelectorAll("nav.views button").forEach(b => b.onclick = () => setView(b.dataset.view));
-const TZF = (() => { try{ return new Intl.DateTimeFormat("en-GB", {timeZone:"Europe/Budapest", hour:"2-digit", minute:"2-digit", second:"2-digit", hourCycle:"h23"}); }catch(e){ return null; } })();
+const TZF = (() => { try{ return new Intl.DateTimeFormat("en-GB", { hour:"2-digit", minute:"2-digit", second:"2-digit", hourCycle:"h23" }); }catch(e){ return null; } })();
+function localZone(){ try{ const p = new Intl.DateTimeFormat("en-GB", { timeZoneName:"short" }).formatToParts(new Date()).find(x => x.type === "timeZoneName"); return p && p.value ? p.value : "Local"; }catch(e){ return "Local"; } }
 const p2 = n => String(n).padStart(2, "0");
 function tickClock(){
   const now = new Date();
@@ -2830,7 +2831,7 @@ function tickClock(){
   $("#clk").textContent = p2(h) + ":" + p2(m) + ":" + p2(s);
   $("#clkUtc").textContent = p2(now.getUTCHours()) + ":" + p2(now.getUTCMinutes()) + ":" + p2(now.getUTCSeconds());
   let secs = 6*3600 - (now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()); if (secs <= 0) secs += 86400;
-  $("#nextBrief").textContent = `Budapest · next edition ${Math.floor(secs/3600)}h ${p2(Math.floor(secs % 3600 / 60))}m`;
+  $("#nextBrief").textContent = localZone() + ` · next edition ${Math.floor(secs/3600)}h ${p2(Math.floor(secs % 3600 / 60))}m`;
 }
 tickClock(); setTimeout(() => { tickClock(); setInterval(tickClock, 1000); }, 1000 - (Date.now() % 1000));
 $("#fsBtn").onclick = toggleFs;
@@ -2996,7 +2997,7 @@ function bhColor(k){ const hit = BH_BASE.find(b => b[0] === k); return hit ? hit
 const THREAT = { high:"#e0402f", medium:"#d9a55b", low:"#6f86a6" };
 function bhAll(){
   const src = mergeDb(A.blackhat || [], state.bhDb);
-  return src.filter(e => e && e.date).slice().sort((a,b) => String(b.date).localeCompare(String(a.date)));
+  return src.filter(e => e && e.date).slice().sort((a,b) => String(a.competitor || "").localeCompare(String(b.competitor || ""), "en", { sensitivity:"base" }) || String(b.date).localeCompare(String(a.date)));
 }
 function bhList(){ const f = state.bhComp; return bhAll().filter(e => !f.size || f.has(bhKey(e.competitor))); }
 function bhFor(iso){ return bhAll().filter(e => (e.iso3 || []).includes(iso)); }
@@ -3100,7 +3101,7 @@ function renderBhRail(){
   const all = bhAll();
   $("#bhN").textContent = (window.ATLAS_LOCK && window.ATLAS_LOCK.locked("engagements")) ? "" : (all.length || "");
   const counts = {}; all.forEach(e => { const k = bhKey(e.competitor); counts[k] = (counts[k] || 0) + 1; });
-  const order = BH_BASE.map(b => b[0]).concat(["Other"]).filter(k => counts[k]);
+  const order = Object.keys(counts).sort((a,b) => a.localeCompare(b, "en", { sensitivity:"base" }));
   const box = $("#bhChips");
   box.hidden = !state.bh;
   box.innerHTML = order.map(k => `<button type="button" class="chip bhchip" data-bhk="${esc(k)}" aria-pressed="${state.bhComp.has(k)}" style="--k:${bhColor(k)}"><i></i>${esc(k)} <span class="muted num">${counts[k]}</span></button>`).join("") + (state.bhComp.size ? `<button type="button" class="textbtn" data-bhk="">All competitors</button>` : "");

@@ -49,6 +49,37 @@ class AtlasData
         return $b;
     }
 
+    /**
+     * The one full edition guests and free accounts can read and play.
+     * It is the earliest briefing filed in the current UTC month, so it stays put until next month.
+     * If this month has none yet, the newest edition on file is used.
+     */
+    public function demoBriefing(): ?array
+    {
+        $briefs = array_values($this->briefings());
+        if ($briefs === []) {
+            return null;
+        }
+        $month = now('UTC')->format('Y-m');
+        $inMonth = array_values(array_filter($briefs, fn ($b) => str_starts_with((string) ($b['date'] ?? ''), $month)));
+        if ($inMonth !== []) {
+            usort($inMonth, fn ($a, $b) => strcmp((string) ($a['date'] ?? ''), (string) ($b['date'] ?? '')));
+            $pick = $inMonth[0];
+        } else {
+            $pick = $briefs[0];
+        }
+        $pick['demo'] = true;
+
+        return $pick;
+    }
+
+    public function demoAudioFile(): ?string
+    {
+        $date = $this->demoBriefing()['date'] ?? null;
+
+        return is_string($date) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ? 'brief_'.$date.'.mp4' : null;
+    }
+
     /** One country file: the daily version when there is one, else the one the page was built with. */
     public function countryFile(string $iso3): ?array
     {
@@ -82,7 +113,8 @@ class AtlasData
                 }
             }
         } else {
-            $out['briefings'] = array_map([self::class, 'briefStub'], array_slice($briefs, 0, 1, true));
+            $demo = $this->demoBriefing();
+            $out['briefings'] = $demo ? [$demo['date'] => $demo] : (object) [];
             $unlocked = $tier === 'free' && $user ? Plans::unlockedThisMonth($user) : [];
             $files = [];
             foreach ($c['country'] ?? [] as $iso => $doc) {

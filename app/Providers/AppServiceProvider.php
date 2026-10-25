@@ -11,6 +11,7 @@ use App\Support\Staff;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Event;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Support\Facades\View;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
@@ -38,6 +39,11 @@ class AppServiceProvider extends ServiceProvider
             // The settings table is created by a migration. Boot still has to work before that.
         }
         View::composer('admin.*', fn ($view) => $view->with('adminNav', Staff::navigation(auth()->user())));
+
+        Event::listen(function (SocialiteWasCalled $event) {
+            $event->extendSocialite('apple', \SocialiteProviders\Apple\Provider::class);
+            $event->extendSocialite('microsoft', \SocialiteProviders\Microsoft\Provider::class);
+        });
 
         Event::listen(Verified::class, SendWelcomeMail::class);
         Event::listen(WebhookHandled::class, SendBillingMail::class);

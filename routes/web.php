@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ApiOrderController;
 use App\Http\Controllers\AtlasController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -42,6 +43,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:6,1');
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/login/{provider}', [SocialController::class, 'redirect'])->whereIn('provider', array_keys(SocialController::PROVIDERS));
+    Route::match(['get', 'post'], '/login/{provider}/callback', [SocialController::class, 'callback'])->whereIn('provider', array_keys(SocialController::PROVIDERS))->middleware('throttle:12,1');
     Route::get('/forgot-password', [PasswordController::class, 'request'])->name('password.request');
     Route::post('/forgot-password', [PasswordController::class, 'email'])->middleware('throttle:6,1')->name('password.email');
     Route::get('/reset-password/{token}', [PasswordController::class, 'edit'])->name('password.reset');

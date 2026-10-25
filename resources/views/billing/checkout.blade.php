@@ -34,6 +34,9 @@
 .merchant li{padding-left:14px;border-left:2px solid var(--gold)}
 .fine{margin:0;color:var(--ink-3);font-size:12.5px;line-height:1.6}
 .trust .btn{border-radius:0}
+.trust a.pay{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;background:#4fbf8f;border:1px solid #4fbf8f;color:#06281c;font:600 17px/1.2 var(--font);letter-spacing:.01em;padding:18px 22px;border-radius:0;text-decoration:none}
+.trust a.pay::before{content:"";width:18px;height:18px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='7' width='10' height='7.2' fill='none' stroke='%2306281c' stroke-width='1.6'/%3E%3Cpath d='M5.2 7V5a2.8 2.8 0 015.6 0v2' fill='none' stroke='%2306281c' stroke-width='1.6'/%3E%3C/svg%3E") center/18px 18px no-repeat}
+.trust a.pay:hover{filter:brightness(1.08);color:#06281c}
 @media (max-width:800px){.sheets{grid-template-columns:minmax(0,1fr)}.price-line b{font-size:44px}.facts div{grid-template-columns:minmax(0,1fr)}}
 @endsection
 @section('content')
@@ -43,7 +46,7 @@
     <div>
       <p class="eyebrow" style="margin:0">Sovereign Space ATLAS</p>
       <strong>EMMA Aerospace Consulting LLP</strong>
-      <span>LL03251 · 1103-11871 Horseshoe Way, Richmond, BC V7A 5H5, Canada</span>
+      <span>Richmond, BC, Canada</span>
     </div>
   </div>
   <div class="sheets">
@@ -78,7 +81,7 @@
         <li>Refunds and payment questions go to Paddle.</li>
       </ul>
       @if ($checkout)
-        <x-paddle-button :checkout="$checkout" class="btn gold" data-theme="dark">Continue to secure checkout</x-paddle-button>
+        <x-paddle-button :checkout="$checkout" class="btn pay" data-theme="dark">Continue to secure checkout</x-paddle-button>
       @else
         <div class="errors">Online checkout is not switched on yet. Write to <a href="mailto:{{ config('atlas.contact') }}">{{ config('atlas.contact') }}</a>.</div>
       @endif

@@ -14,6 +14,7 @@
     <label class="check"><input type="checkbox" name="remember" value="1"> Keep me signed in on this device</label>
     <div class="row"><button class="btn gold" type="submit">Sign in</button><a class="btn link" href="/forgot-password">Forgot your password?</a></div>
   </form>
+  @include('auth.providers')
   <p class="muted" style="margin:0">New here? <a href="/register{{ request('email') ? '?email='.urlencode(request('email')) : '' }}">Create a free account</a>. It opens {{ config('atlas.free_files_per_month') }} full country files a month.</p>
 </div>
 @endsection

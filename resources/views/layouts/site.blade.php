@@ -122,7 +122,7 @@ footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:
 </main>
 <footer class="foot">
   <div class="wrap">
-    <span>&copy; {{ date('Y') }} EMMA Aerospace Consulting LLP &middot; Richmond, BC, Canada &middot; LL03251</span>
+    <span>&copy; {{ date('Y') }} EMMA Aerospace Consulting LLP. All rights reserved. Richmond, BC, Canada.</span>
     <nav aria-label="Legal">
       <a href="/legal#terms">Terms</a>
       <a href="/legal#privacy">Privacy</a>
