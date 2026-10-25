@@ -24,7 +24,8 @@ class AtlasAdmin extends Command
                 if (! $user) {
                     return $this->fail1('Create the account at /register first.');
                 }
-                $user->forceFill(['is_admin' => true, 'email_verified_at' => $user->email_verified_at ?? now()])->save();
+                $user->assignStaffRole('admin');
+                $user->forceFill(['email_verified_at' => $user->email_verified_at ?? now()])->save();
                 $this->info($user->email.' can open /admin.');
                 break;
             case 'grant':

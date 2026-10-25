@@ -94,8 +94,32 @@
       <form class="form" method="POST" action="/account/profile">@csrf
         <label>Full name<input type="text" name="name" value="{{ old('name', $user->name) }}" required></label>
         <label>Organization<input type="text" name="organization" value="{{ old('organization', $user->organization) }}"></label>
+        @if (session('org_matches'))
+          <fieldset class="stack" style="gap:8px">
+            <legend>This matches the directory. Choose the organization, or keep the name unmatched.</legend>
+            @foreach (session('org_matches') as $org)
+              <label class="check"><input type="radio" name="organization_id" value="{{ $org['id'] }}" @checked(old('organization_id') === $org['id'])> <span>{{ $org['name'] }} <span class="faint">{{ $org['iso3'] ?? '' }}</span></span></label>
+            @endforeach
+            <label class="check"><input type="checkbox" name="keep_unmatched" value="1"> <span>Keep it as an unmatched name</span></label>
+          </fieldset>
+          <label>Your title<input type="text" name="job_title" value="{{ old('job_title', $user->job_title) }}" autocomplete="organization-title"></label>
+          <label class="check"><input type="checkbox" name="show_on_organization" value="1" @checked(old('show_on_organization', $user->show_on_organization))> <span>Show my name and title with this organization</span></label>
+        @elseif($user->organization_id)
+          <p class="muted" style="margin:0">Linked to the directory. Title: {{ $user->job_title ?: 'not set' }}. {{ $user->show_on_organization ? 'Visible on the organization.' : 'Hidden on the organization.' }}</p>
+          <input type="hidden" name="organization_id" value="{{ $user->organization_id }}">
+          <label>Your title<input type="text" name="job_title" value="{{ old('job_title', $user->job_title) }}" required></label>
+          <label class="check"><input type="checkbox" name="show_on_organization" value="1" @checked(old('show_on_organization', $user->show_on_organization))> <span>Show my name and title with this organization</span></label>
+          <label class="check"><input type="checkbox" name="keep_unmatched" value="1"> <span>Remove the directory link and keep the name only</span></label>
+        @endif
         <label class="check"><input type="checkbox" name="marketing" value="1" @checked($user->marketing_opt_in)> <span>Occasional news about the atlas by email</span></label>
         <div class="row"><button class="btn sm" type="submit">Save</button></div>
+      </form>
+    </section>
+    <section class="card stack" aria-labelledby="couponH">
+      <h2 class="h3" id="couponH">Coupon</h2>
+      <form class="form" method="POST" action="/account/coupon">@csrf
+        <label>Code<input type="text" name="code" required autocomplete="off"></label>
+        <div class="row"><button class="btn sm" type="submit">Apply</button></div>
       </form>
     </section>
     <section class="card stack" aria-labelledby="pwH">
