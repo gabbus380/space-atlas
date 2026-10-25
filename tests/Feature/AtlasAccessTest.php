@@ -164,6 +164,49 @@ class AtlasAccessTest extends TestCase
         $this->assertSame(['POL', 'CZE'], $team->fresh()->watchlist);
     }
 
+    public function test_team_subscription_watchlist_stays_separate_from_the_personal_list(): void
+    {
+        [$owner, $member, $team] = $this->team();
+        $owner->forceFill(['watchlist' => ['USA', 'FRA'], 'watch_scope' => 'me'])->save();
+        $this->actingAs($owner);
+
+        $mine = $this->getJson('/app/live')->json('collections.config.focus');
+        $this->assertSame('me', $mine['scope']);
+        $this->assertTrue($mine['saved']);
+        $this->assertSame(['USA', 'FRA'], $mine['iso3']);
+
+        $this->postJson('/app/watchlist/scope', ['scope' => 'team'])->assertOk()
+            ->assertJsonPath('ent.watchScope', 'team')
+            ->assertJsonPath('ent.features.watch', 'team');
+        $teamList = $this->getJson('/app/live')->json('collections.config.focus');
+        $this->assertSame('team', $teamList['scope']);
+        $this->assertFalse($teamList['saved']);
+        $this->assertSame([], $teamList['iso3']);
+
+        $this->putJson('/app/watchlist', ['iso3' => ['DEU', 'IND', 'CHN']])->assertOk()
+            ->assertJsonPath('doc.scope', 'team')
+            ->assertJsonPath('doc.iso3', ['DEU', 'IND', 'CHN']);
+        $this->assertSame(['DEU', 'IND', 'CHN'], $team->fresh()->watchlist);
+        $this->assertSame(['USA', 'FRA'], $owner->fresh()->watchlist);
+
+        $this->postJson('/app/watchlist/scope', ['scope' => 'me'])->assertOk();
+        $this->assertSame(['USA', 'FRA'], $this->getJson('/app/live')->json('collections.config.focus.iso3'));
+
+        $this->actingAs($member);
+        $this->postJson('/app/watchlist/scope', ['scope' => 'team'])->assertOk();
+        $shared = $this->getJson('/app/live')->json('collections.config.focus');
+        $this->assertSame('team', $shared['scope']);
+        $this->assertSame(['DEU', 'IND', 'CHN'], $shared['iso3']);
+    }
+
+    public function test_default_watchlist_names_the_six_reference_countries(): void
+    {
+        $needle = 'const FOCUS_DEFAULT = ["USA", "GBR", "DEU", "FRA", "IND", "CHN"]';
+        $this->get('/')->assertOk()->assertSee($needle, false);
+        $this->actingAs($this->personal())->get('/')->assertOk()->assertSee($needle, false);
+        $this->get('/')->assertSee('scope === "team"', false);
+    }
+
     public function test_seat_order_decides_who_keeps_access(): void
     {
         [$owner, $member, $team] = $this->team(2);

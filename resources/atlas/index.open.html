@@ -288,7 +288,7 @@
     }
     var s = e.target.closest("[data-lk-scope]");
     if (s && s.getAttribute("aria-pressed") !== "true") {
-      send("POST", U("scope", "app/watchlist/scope"), { scope: s.dataset.lkScope }).then(function (j) { setEnt(j.ent); return reload(); }).catch(function () {});
+      send("POST", U("scope", "app/watchlist/scope"), { scope: s.dataset.lkScope }).then(function (j) { setEnt(j.ent); if (typeof refreshFocusUi === "function") refreshFocusUi(); return reload(); }).catch(function () {});
     }
   });
   document.addEventListener("atlas:ent", function () { header(); wall("projects"); wall("eco"); wall("compare"); });
@@ -345,6 +345,11 @@ body{background:var(--void);color:var(--ink);font-family:var(--font);font-size:1
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--ink);background-color:var(--void);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23e5bf6d' stroke-width='1.6' stroke-linecap='square'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:12px 8px;border:1px solid var(--line-2);border-radius:0;padding:8px 36px 8px 10px;color-scheme:dark}
+select:hover{border-color:var(--ink-3)}
+select:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+select option,select optgroup{background:#0c1220;color:#e6eaf1}
+select option:checked{background:#151d2e;color:#e5bf6d}
 a{color:var(--reef);text-decoration:none}
 a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--orange);outline-offset:2px}
@@ -411,7 +416,7 @@ main{min-height:0;position:relative}
 .match{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink-3);margin-top:8px}
 .match button{border:0;background:none;color:var(--ink-3);cursor:pointer;padding:0;font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
 .match button[aria-pressed="true"]{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.metric select{width:100%;background:var(--void);border:1px solid var(--line-2);border-radius:2px;padding:8px 10px;font-size:13px;outline:none}
+.metric select{width:100%;background-color:var(--void);border:1px solid var(--line-2);border-radius:0;padding:8px 36px 8px 10px;font-size:13px;outline:none}
 .rail .foot{margin-top:auto;display:flex;flex-direction:column;gap:6px}
 .textbtn{border:0;background:none;padding:0;color:var(--ink-3);cursor:pointer;text-align:left;font-size:12px}
 .textbtn:hover{color:var(--ink)}
@@ -593,7 +598,7 @@ details.more>summary::-webkit-details-marker{display:none}
 .player .prog{height:3px;background:var(--raise);border-radius:2px;overflow:hidden}
 .player .prog i{display:block;height:100%;width:0;background:var(--orange);transition:width .3s}
 .player select,.player input[type=range]{width:100%}
-.player select{background:var(--void);border:1px solid var(--line-2);border-radius:2px;padding:5px 6px;font-size:12px}
+.player select{background-color:var(--void);border:1px solid var(--line-2);border-radius:0;padding:5px 32px 5px 8px;font-size:12px}
 .player label{font-size:11px;color:var(--ink-3);display:flex;flex-direction:column;gap:4px}
 .player input[type=range]{accent-color:var(--orange)}
 .toc{display:flex;flex-direction:column;gap:1px}
@@ -897,7 +902,8 @@ td.tot{font-family:var(--mono);font-size:12px;color:var(--ink-2);text-align:cent
 .eform{display:flex;flex-direction:column;gap:10px}
 .eform h2{margin:0 0 4px}
 .eform label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
-.eform input:not([type=checkbox]),.eform select,.eform textarea{background:var(--void);border:1px solid var(--line-2);border-radius:2px;padding:7px 10px;font-size:13px;outline:none;font-family:var(--font);letter-spacing:0;text-transform:none;color:var(--ink)}
+.eform input:not([type=checkbox]),.eform select,.eform textarea{background-color:var(--void);border:1px solid var(--line-2);border-radius:0;padding:7px 10px;font-size:13px;outline:none;font-family:var(--font);letter-spacing:0;text-transform:none;color:var(--ink)}
+.eform select{padding-right:36px}
 .eform input:focus,.eform select:focus,.eform textarea:focus{border-color:var(--orange)}
 .eform textarea{resize:vertical}
 .eform .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1260,7 +1266,7 @@ h2,.map-title h2,.b-head h2,.sec h2,h2.dh,.e-head h2,.cmp-bar h2,.modal header h
 .cm-tab span,.cm-cat span{font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
 .cm-tab:hover,.cm-cat:hover{background:var(--raise)}
 .cm-tab[aria-pressed="true"],.cm-cat[aria-pressed="true"]{background:var(--raise);border-color:var(--line-2);color:var(--ink);box-shadow:inset 2px 0 0 var(--gold)}
-#mSide select{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line-2);border-radius:2px;padding:8px;font:inherit;font-size:13px}
+#mSide select{width:100%;background-color:var(--panel);color:var(--ink);border:1px solid var(--line-2);border-radius:0;padding:8px 36px 8px 10px;font:inherit;font-size:13px}
 .cm-disc{font-size:11px;line-height:1.5;color:var(--ink-3);margin:auto 0 0}
 .cm-ext{display:inline-flex;align-items:center;gap:5px;color:var(--gold);text-decoration:none;font-size:12.5px;white-space:nowrap}
 .cm-ext svg{width:10px;height:10px;flex:none}
@@ -1788,9 +1794,9 @@ if (!MBY[state.metric]) { state.metric = "space_usd"; store.set("metric", "space
 if (!R.find(r => r.id === state.region)) state.region = "world";
 
 /* ---------------- focus countries: editable, shared through the page database (config/focus) so the morning run follows them ---------------- */
-const FOCUS_DEFAULT = ((G.focus || {}).members || []).slice();
+const FOCUS_DEFAULT = ["USA", "GBR", "DEU", "FRA", "IND", "CHN"];
 const ACTIVE0 = {}; A.countries.forEach(c => { if (c.focus === 2) ACTIVE0[c.iso3] = true; });
-state.focusList = FOCUS_DEFAULT.slice(); state.focusSrc = "default"; state.focusVer = null;
+state.focusList = []; state.focusSrc = "default"; state.focusVer = null; state.focusScope = null;
 function applyFocus(list, src){
   const seen = new Set(), out = [];
   (list || []).forEach(i => { i = String(i || "").toUpperCase(); if (C[i] && !seen.has(i)){ seen.add(i); out.push(i); } });
@@ -1799,6 +1805,7 @@ function applyFocus(list, src){
   state.focusList = out; state.focusSrc = src || "default";
 }
 function isFocus(iso){ return !!(C[iso] && C[iso].focus === 1); }
+applyFocus(FOCUS_DEFAULT, "default");
 (function(){ const loc = store.get("focusLocal", null); if (Array.isArray(loc) && loc.length) applyFocus(loc, "local"); })();
 async function saveFocus(list){
   const prev = state.focusList.slice(), prevSrc = state.focusSrc;
@@ -4865,8 +4872,19 @@ window.addEventListener("resize", () => { if (state.view === "atlas"){ if (TOUR 
     db.collection("config").onSnapshot(snap => {
       const d = snap.docs.find(x => x.id === "focus" && x.exists);
       const v = d ? d.data() : null;
-      if (v && Array.isArray(v.iso3) && v.iso3.length){ if (v.iso3.join() !== state.focusList.join() || state.focusSrc !== "db"){ applyFocus(v.iso3, "db"); store.set("focusLocal", null); refreshFocusUi(); } else state.focusSrc = "db"; }
-      else if (state.focusSrc === "db"){ applyFocus(FOCUS_DEFAULT, "default"); refreshFocusUi(); }
+      const scope = v && v.scope ? v.scope : null;
+      const authoritative = !!(v && Array.isArray(v.iso3) && (v.saved !== false || scope === "team"));
+      if (authoritative){
+        const changed = v.iso3.join() !== state.focusList.join() || state.focusSrc !== "db" || state.focusScope !== scope;
+        state.focusScope = scope;
+        if (changed){ applyFocus(v.iso3, "db"); store.set("focusLocal", null); refreshFocusUi(); }
+        return;
+      }
+      if (state.focusSrc === "db" || (state.focusScope && scope && state.focusScope !== scope)){
+        state.focusScope = scope;
+        applyFocus(FOCUS_DEFAULT, "default");
+        refreshFocusUi();
+      }
     }, err => { console.warn("config", err && err.code); });
     db.collection("notes").onSnapshot(snap => {
       const L = {}; snap.docs.forEach(d => { if (d.exists && !d.id.startsWith("_")) L[d.id] = d.data(); });
