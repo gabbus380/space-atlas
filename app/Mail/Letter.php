@@ -76,13 +76,7 @@ class Letter
             ->subject($this->subject)
             ->view(['html' => 'mail.letter', 'text' => 'mail.letter-text'], ['letter' => $this]);
 
-        $url = $this->unsubscribeUrl;
-        if ($url) {
-            $message->withSymfonyMessage(function (Email $email) use ($url) {
-                $email->getHeaders()->addTextHeader('List-Unsubscribe', '<'.$url.'>');
-                $email->getHeaders()->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
-            });
-        }
+        $message->withSymfonyMessage(fn (Email $email) => $this->applyListHeaders($email));
 
         return $message;
     }
@@ -93,15 +87,35 @@ class Letter
         $letter = $this;
         Mail::send(['html' => 'mail.letter', 'text' => 'mail.letter-text'], ['letter' => $letter], function ($message) use ($email, $subject, $letter) {
             $message->to($email)->subject($subject);
-            if ($letter->unsubscribeUrl) {
-                $message->getSymfonyMessage()->getHeaders()->addTextHeader('List-Unsubscribe', '<'.$letter->unsubscribeUrl.'>');
-                $message->getSymfonyMessage()->getHeaders()->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
-            }
+            $letter->applyListHeaders($message->getSymfonyMessage());
         });
+    }
+
+    /**
+     * RFC 8058 one-click headers. Apple Mail, Gmail, Yahoo, and Outlook POST
+     * to the HTTPS URL when the reader uses the inbox Unsubscribe button.
+     */
+    public function applyListHeaders(Email $email): void
+    {
+        $url = $this->unsubscribeUrl;
+        if (! is_string($url) || ! str_starts_with($url, 'https://') || ! str_contains($url, 'signature=')) {
+            return;
+        }
+
+        $list = $this->kind === 'briefing' ? 'briefing' : 'news';
+        $headers = $email->getHeaders();
+        $headers->addTextHeader('List-Unsubscribe', '<'.$url.'>');
+        $headers->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+        $headers->addTextHeader('List-Id', 'Sovereign Space ATLAS '.$list.' <'.$list.'.atlas.emmaconsulting.space>');
     }
 
     public static function unsubscribe(User $user, string $list): string
     {
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+        if (is_string($host) && ! in_array($host, ['localhost', '127.0.0.1'], true)) {
+            URL::forceScheme('https');
+        }
+
         return URL::signedRoute('email.unsubscribe', ['user' => $user->id, 'list' => $list]);
     }
 

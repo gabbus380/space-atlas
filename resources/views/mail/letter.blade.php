@@ -115,7 +115,7 @@
 @if ($letter->unsubscribeUrl)
 <p style="margin:12px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#a9b3c3;">
 <a href="{{ $letter->unsubscribeUrl }}" style="color:#e5bf6d;text-decoration:underline;">Unsubscribe</a>
-from @if ($letter->kind === 'briefing') the morning briefing @else the monthly note @endif.
+from {{ $letter->kind === 'briefing' ? 'the morning briefing' : 'the monthly note' }}.
 You can also change this on your <a href="{{ url('/account') }}" style="color:#e5bf6d;text-decoration:underline;">account page</a>.
 </p>
 @endif
