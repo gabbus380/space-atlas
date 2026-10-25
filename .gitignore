@@ -147,6 +147,9 @@ vite.config.ts.timestamp-*
 .phpunit.result.cache
 .phpunit.cache
 
+# Paddle MCP config holds the sandbox API key. Keep the example, not the real file.
+.cursor/mcp.json
+
 # Astro generated types
 .astro/
 

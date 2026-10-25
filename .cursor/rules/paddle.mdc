@@ -1,0 +1,18 @@
+---
+description: Conventions for Paddle Billing in Sovereign Space ATLAS
+globs: ["**/*.php", "resources/views/**/*.blade.php"]
+alwaysApply: false
+---
+
+# Paddle integration rules
+
+This app uses Laravel Cashier Paddle (`laravel/cashier-paddle`). Webhooks are received at `/paddle/webhook`. Prices and keys come from environment variables or the admin Connectors page, never from source code.
+
+When writing or modifying Paddle code:
+
+- Check current Paddle documentation with the paddle-docs MCP server before suggesting API or Paddle.js syntax. Do not rely on training data.
+- Keep using Cashier for customers, subscriptions, transactions, and webhook signature checks. Do not add a second Paddle PHP SDK beside it.
+- Sandbox and live are separate. Sandbox API keys contain `_sdbx`. Sandbox client-side tokens start with `test_`. Staging uses the sandbox. Production uses live.
+- Never inline API keys, client tokens, or webhook secrets. Leave secret fields blank in the admin form to keep the stored value.
+- For destructive account changes (updating prices, archiving products), ask for explicit confirmation before calling the Paddle MCP server.
+- Say which environment you mean: paddle-sandbox or paddle-live.
