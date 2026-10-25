@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\AtlasEdit;
+use App\Models\Team;
 use App\Models\User;
 
 /** Reads the atlas organization directory and applies staff edits on top. */
@@ -60,6 +61,28 @@ class OrganizationDirectory
         usort($scored, fn ($a, $b) => $b['score'] <=> $a['score']);
 
         return array_map(fn ($row) => $row['org'], array_slice($scored, 0, $limit));
+    }
+
+    /** The oldest linked account, then a team owner, then a name match. */
+    public static function mainAccount(array $org): ?User
+    {
+        $id = (string) ($org['id'] ?? '');
+        if ($id !== '') {
+            $linked = User::query()->where('organization_id', $id)->orderBy('id')->first();
+            if ($linked) {
+                return $linked;
+            }
+        }
+        $name = (string) ($org['name'] ?? '');
+        if ($name === '') {
+            return null;
+        }
+        $owner = Team::query()->whereRaw('lower(name) = ?', [strtolower($name)])->orderBy('id')->first()?->owner;
+        if ($owner) {
+            return $owner;
+        }
+
+        return User::query()->whereRaw('lower(organization) = ?', [strtolower($name)])->orderBy('id')->first();
     }
 
     public static function find(string $id): ?array

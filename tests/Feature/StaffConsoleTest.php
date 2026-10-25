@@ -75,6 +75,31 @@ class StaffConsoleTest extends TestCase
         $this->assertTrue($user->show_on_organization);
     }
 
+    public function test_api_key_search_fills_the_organizations_main_account(): void
+    {
+        $org = OrganizationDirectory::search('Azercosmos')[0];
+        $main = User::factory()->create([
+            'name' => 'Leyla Aliyeva',
+            'email' => 'leyla@azercosmos.az',
+            'organization' => 'Azercosmos',
+            'organization_id' => $org['id'],
+        ]);
+        User::factory()->create([
+            'email' => 'later@azercosmos.az',
+            'organization_id' => $org['id'],
+        ]);
+
+        $this->actingAs($this->staff(Staff::ADMIN))
+            ->getJson('/admin/api-keys/organizations?q=Azercosmos')
+            ->assertOk()
+            ->assertJsonPath('0.email', $main->email)
+            ->assertJsonPath('0.account', 'Leyla Aliyeva');
+
+        $this->actingAs($this->staff(Staff::SALES))
+            ->getJson('/admin/api-keys/organizations?q=Azercosmos')
+            ->assertNotFound();
+    }
+
     private function staff(string $role): User
     {
         $user = User::factory()->create();
