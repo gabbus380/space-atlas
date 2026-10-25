@@ -63,8 +63,13 @@ class AtlasAccessTest extends TestCase
         $this->assertStringNotContainsString($atlas['blackhat'][0]['title'], $html);
         $this->assertStringNotContainsString('"cm25":3600', $html);
         $atlasJson = $this->embeddedAtlas($html);
-        $this->assertCount(18, $atlasJson['countries']);
-        $this->assertNotContains('NLD', array_column($atlasJson['countries'], 'iso3'));
+        $this->assertGreaterThan(100, count($atlasJson['countries']));
+        $this->assertContains('NLD', array_column($atlasJson['countries'], 'iso3'));
+        $fra = collect($atlasJson['countries'])->firstWhere('iso3', 'FRA');
+        $this->assertNotNull($fra);
+        $this->assertArrayHasKey('space', $fra);
+        $this->assertArrayNotHasKey('gdp', $fra);
+        $this->assertArrayNotHasKey('cm25', $fra['esa']);
         $this->assertStringContainsString('Compare countries side by side.', $html);
     }
 

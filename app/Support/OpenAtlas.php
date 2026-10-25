@@ -8,9 +8,7 @@ namespace App\Support;
  */
 class OpenAtlas
 {
-    public const LIMIT = 18;
-
-    /** Fields the open edition must not carry. */
+    /** Fields the open edition must not carry. The map still receives names, regions, and space budgets. */
     private const DROP = [
         'gdp', 'gdpYear', 'gdpNote', 'gerd', 'gerdYear',
         'def', 'defPct', 'defYear', 'natoPct',
@@ -57,28 +55,24 @@ class OpenAtlas
 
     public static function redact(array $data): array
     {
-        $ranked = array_values(array_filter(
-            $data['countries'] ?? [],
-            fn ($c) => is_array($c) && isset($c['index']['rank']) && is_numeric($c['index']['rank']),
-        ));
-        usort($ranked, fn ($a, $b) => ((int) $a['index']['rank']) <=> ((int) $b['index']['rank']));
-        $keep = array_slice($ranked, 0, self::LIMIT);
-        $iso = [];
-        foreach ($keep as &$country) {
-            $iso[] = $country['iso3'];
+        $countries = [];
+        foreach ($data['countries'] ?? [] as $country) {
+            if (! is_array($country)) {
+                continue;
+            }
             foreach (self::DROP as $key) {
                 unset($country[$key]);
             }
             if (isset($country['esa']) && is_array($country['esa'])) {
                 unset($country['esa']['cm25'], $country['esa']['cm22'], $country['esa']['contrib'], $country['esa']['contribYear']);
             }
+            $countries[] = $country;
         }
-        unset($country);
-        $data['countries'] = $keep;
+        $data['countries'] = $countries;
 
         $files = [];
         foreach ($data['cfiles'] ?? [] as $code => $doc) {
-            if (in_array($code, $iso, true) && is_array($doc)) {
+            if (is_array($doc)) {
                 $files[$code] = AtlasData::stub($doc);
             }
         }

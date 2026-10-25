@@ -2121,7 +2121,7 @@ function renderOverview(){
     <span class="eyebrow">Regional overview${fl.groups ? " · " + esc(fl.groups) : ""}</span>
     <h2>${esc(fl.region)}</h2>
     <div class="kpis">
-      <div class="kpi"><span>Countries</span><b>${list.length}</b><small>The 18 leading national programs</small></div>
+      <div class="kpi"><span>Countries</span><b>${list.length}</b><small>${core.length} with space profiles</small></div>
       <div class="kpi"><span>Space budgets</span><b>${fUsdM(sp.s || null)}</b><small>Sum of ${sp.n} reported</small></div>
       <div class="kpi"><span>Astronauts flown</span><b>${flown.s}</b><small>Nationals, all eras</small></div>
     </div>
