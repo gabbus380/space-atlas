@@ -2646,7 +2646,12 @@ const COLS = [
   {k:"elnext", l:"Next election", get:c=>{ const n = nextAny(c); return n ? n.next.t : null; }, fmt:v=>{ const d = new Date(v); return MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); }},
   {k:"elcyc", l:"Term elapsed", get:c=>{ const d = decisive(c); return d && d.pct != null ? d.pct * 100 : null; }, fmt:v=>Math.round(v) + "%"},
   {k:"flown"}, {k:"ready"}, {k:"sats"}, {k:"index"}
-].map(col => col.get ? col : Object.assign({l:MBY[col.k].label.replace(/ \(.*\)/,"").replace(", best available",""), get:MBY[col.k].get, fmt:MBY[col.k].fmt}, col));
+].map(col => {
+  if (col.get) return col;
+  const metric = MBY[col.k];
+  if (!metric) return null;
+  return Object.assign({l:metric.label.replace(/ \(.*\)/,"").replace(", best available",""), get:metric.get, fmt:metric.fmt}, col);
+}).filter(Boolean);
 function renderCompare(){
   if (window.ATLAS_LOCK && window.ATLAS_LOCK.view("compare")) return;
   const list = filtered().filter(c => c.core || c.gdp != null);
