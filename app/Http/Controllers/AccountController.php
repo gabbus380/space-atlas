@@ -78,6 +78,7 @@ class AccountController extends Controller
             'job_title' => $claim ? trim((string) ($data['job_title'] ?? '')) : null,
             'show_on_organization' => $claim ? $request->boolean('show_on_organization') : false,
             'marketing_opt_in' => $request->boolean('marketing'),
+            'briefing_opt_out' => ! $request->boolean('briefing'),
         ])->save();
 
         $status = $claim
@@ -135,7 +136,7 @@ class AccountController extends Controller
         $u = $request->user();
         $data = [
             'exported_at' => now()->toIso8601ZuluString(),
-            'account' => $u->only(['name', 'email', 'organization', 'created_at', 'email_verified_at', 'marketing_opt_in', 'terms_accepted_at', 'watch_scope']),
+            'account' => $u->only(['name', 'email', 'organization', 'created_at', 'email_verified_at', 'marketing_opt_in', 'briefing_opt_out', 'terms_accepted_at', 'watch_scope']),
             'plan' => Plans::tier($u),
             'watchlist' => $u->watchlist,
             'team' => $u->team ? ['name' => $u->team->name, 'role' => $u->team->owner_id === $u->id ? 'owner' : 'member', 'joined_at' => $u->team_joined_at] : null,

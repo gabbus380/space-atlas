@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Mail\Letters;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -18,11 +19,10 @@ class TeamInvite extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject($this->from->name.' invited you to '.$this->invitation->team->name.' on Sovereign Space ATLAS')
-            ->greeting('Hello,')
-            ->line($this->from->name.' added you to the '.$this->invitation->team->name.' team on Sovereign Space ATLAS. The seat is paid by the team.')
-            ->action('Join the team', url('/invite/'.$this->token))
-            ->line('The link works for 14 days. If you did not expect this, you can ignore this email.');
+        return Letters::teamInvite(
+            $this->from->name,
+            $this->invitation->team->name,
+            url('/invite/'.$this->token),
+        )->message();
     }
 }

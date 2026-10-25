@@ -129,7 +129,8 @@
           <label class="check"><input type="checkbox" name="show_on_organization" value="1" @checked(old('show_on_organization', $user->show_on_organization))> <span>Show my name and title with this organization</span></label>
           <label class="check"><input type="checkbox" name="keep_unmatched" value="1"> <span>Remove the directory link and keep the name only</span></label>
         @endif
-        <label class="check"><input type="checkbox" name="marketing" value="1" @checked($user->marketing_opt_in)> <span>Occasional news about the atlas by email</span></label>
+        <label class="check"><input type="checkbox" name="briefing" value="1" @checked(! $user->briefing_opt_out)> <span>Email me the morning briefing while a paid plan is active</span></label>
+        <label class="check"><input type="checkbox" name="marketing" value="1" @checked($user->marketing_opt_in)> <span>Email me the monthly note about the atlas</span></label>
         <div class="row"><button class="btn sm" type="submit">Save</button></div>
       </form>
     </section>

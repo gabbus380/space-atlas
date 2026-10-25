@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Letters;
 use App\Models\ApiKey;
 use App\Models\ApiRequest;
+use App\Notifications\SystemMail;
 use App\Support\Staff;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class ApiRequestController extends Controller
@@ -79,6 +82,12 @@ class ApiRequestController extends Controller
             'handled_at' => now(),
             'handled_by' => $request->user()->id,
         ])->save();
+        Notification::route('mail', $apiRequest->email)->notify(new SystemMail(Letters::apiKey(
+            $key->name,
+            $plain,
+            (int) $key->daily_quota,
+            false,
+        )));
 
         return back()->with('status', 'API key issued for '.$key->name.'. Copy it now, it is shown only once.')->with('plain_key', $plain);
     }

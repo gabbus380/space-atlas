@@ -2,16 +2,21 @@
 
 namespace App\Providers;
 
+use App\Listeners\SendBillingMail;
+use App\Listeners\SendWelcomeMail;
+use App\Mail\Letters;
 use App\Support\AtlasData;
 use App\Support\Connectors;
 use App\Support\Staff;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Paddle\Events\WebhookHandled;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,19 +39,16 @@ class AppServiceProvider extends ServiceProvider
         }
         View::composer('admin.*', fn ($view) => $view->with('adminNav', Staff::navigation(auth()->user())));
 
+        Event::listen(Verified::class, SendWelcomeMail::class);
+        Event::listen(WebhookHandled::class, SendBillingMail::class);
+
         // App\Listeners\SyncSubscriptionMeta is found by event discovery.
 
-        VerifyEmail::toMailUsing(fn (object $notifiable, string $url) => (new MailMessage)
-            ->subject('Confirm your email for Sovereign Space ATLAS')
-            ->greeting('Hello '.($notifiable->firstName() ?? '').',')
-            ->line('Confirm this address to open full country files and to subscribe.')
-            ->action('Confirm email address', $url)
-            ->line('If you did not create an account, you can ignore this email.'));
+        VerifyEmail::toMailUsing(fn (object $notifiable, string $url) => Letters::verify($notifiable, $url)->message());
 
-        ResetPassword::toMailUsing(fn (object $notifiable, string $token) => (new MailMessage)
-            ->subject('Reset your Sovereign Space ATLAS password')
-            ->line('Someone asked to reset the password for this account.')
-            ->action('Choose a new password', url(route('password.reset', ['token' => $token, 'email' => $notifiable->getEmailForPasswordReset()], false)))
-            ->line('The link works for 60 minutes. If it was not you, no change is made.'));
+        ResetPassword::toMailUsing(fn (object $notifiable, string $token) => Letters::resetPassword(
+            $notifiable,
+            route('password.reset', ['token' => $token, 'email' => $notifiable->getEmailForPasswordReset()]),
+        )->message());
     }
 }
