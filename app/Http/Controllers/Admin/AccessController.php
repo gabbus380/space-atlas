@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Letters;
 use App\Models\ApiKey;
 use App\Models\Coupon;
+use App\Notifications\SystemMail;
 use App\Support\OrganizationDirectory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -47,6 +50,7 @@ class AccessController extends Controller
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
         [$key, $plain] = ApiKey::issue($data);
+        $this->mailKey($key->contact_email, $key->name, $plain, (int) $key->daily_quota, false);
 
         return back()->with('status', 'API key for '.$key->name.' created. Copy it now, it is shown only once.')->with('plain_key', $plain);
     }
@@ -58,9 +62,18 @@ class AccessController extends Controller
         return back()->with('status', $key->name.' is '.($key->active ? 'active' : 'switched off').'.');
     }
 
+    private function mailKey(?string $email, string $organization, string $plain, int $quota, bool $rotated): void
+    {
+        if (! $email) {
+            return;
+        }
+        Notification::route('mail', $email)->notify(new SystemMail(Letters::apiKey($organization, $plain, $quota, $rotated)));
+    }
+
     public function refreshKey(ApiKey $key): RedirectResponse
     {
         $plain = $key->rotate();
+        $this->mailKey($key->contact_email, $key->name, $plain, (int) $key->daily_quota, true);
 
         return back()->with('status', 'A new key for '.$key->name.' is ready. The previous key no longer works. Copy it now, it is shown only once.')->with('plain_key', $plain);
     }

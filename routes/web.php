@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\EmailPreferenceController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WithdrawalController;
 use App\Http\Middleware\EnsureStaff;
@@ -31,6 +32,9 @@ Route::redirect('/refunds', '/legal#refunds');
 Route::get('/withdraw', [WithdrawalController::class, 'create'])->name('withdraw');
 Route::post('/withdraw', [WithdrawalController::class, 'store'])->middleware('throttle:6,1');
 Route::get('/invite/{token}', [TeamController::class, 'accept'])->name('invite.accept');
+Route::match(['get', 'post'], '/email/preferences/{user}/{list}', [EmailPreferenceController::class, 'update'])
+    ->middleware('signed')
+    ->name('email.unsubscribe');
 
 // sign up and sign in
 Route::middleware('guest')->group(function () {

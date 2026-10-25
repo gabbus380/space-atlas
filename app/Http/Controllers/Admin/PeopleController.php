@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Letters;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Withdrawal;
+use App\Notifications\SystemMail;
 use App\Support\Plans;
 use App\Support\Staff;
 use Illuminate\Http\RedirectResponse;
@@ -51,6 +53,7 @@ class PeopleController extends Controller
     {
         $days = (int) $request->validate(['days' => ['required', 'integer', 'min:1', 'max:730']])['days'];
         $user->forceFill(['plan_override' => 'personal', 'override_until' => today()->addDays($days)])->save();
+        $user->notify(new SystemMail(Letters::complimentary($user, $user->override_until->format('F j, Y'))));
 
         return back()->with('status', $user->email.' has Personal until '.$user->override_until->format('F j, Y').'.');
     }

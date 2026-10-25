@@ -16,7 +16,7 @@
     <label>Password <span class="faint">(at least 10 characters, letters and numbers)</span><input type="password" name="password" required autocomplete="new-password"></label>
     <label>Repeat the password<input type="password" name="password_confirmation" required autocomplete="new-password"></label>
     <label class="check"><input type="checkbox" name="terms" value="1" required @checked(old('terms'))> <span>I accept the <a href="/legal#terms" target="_blank">Terms of Service</a> and have read the <a href="/legal#privacy" target="_blank">Privacy Policy</a>.</span></label>
-    <label class="check"><input type="checkbox" name="marketing" value="1" @checked(old('marketing'))> <span>Send me occasional news about the atlas from EMMA Aerospace Consulting. You can unsubscribe at any time.</span></label>
+    <label class="check"><input type="checkbox" name="marketing" value="1" @checked(old('marketing'))> <span>Send me the monthly note about the atlas from EMMA Aerospace Consulting. You can unsubscribe at any time.</span></label>
     <div class="row"><button class="btn gold" type="submit">Create account</button></div>
   </form>
   <p class="muted" style="margin:0">Already have an account? <a href="/login">Sign in</a>.</p>

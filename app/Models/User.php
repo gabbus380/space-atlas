@@ -18,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Paddle\Billable;
 
-#[Fillable(['name', 'email', 'password', 'organization', 'marketing_opt_in', 'terms_accepted_at'])]
+#[Fillable(['name', 'email', 'password', 'organization', 'marketing_opt_in', 'briefing_opt_out', 'terms_accepted_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_admin' => 'boolean',
             'show_on_organization' => 'boolean',
             'marketing_opt_in' => 'boolean',
+            'briefing_opt_out' => 'boolean',
             'terms_accepted_at' => 'datetime',
             'team_joined_at' => 'datetime',
             'watchlist' => 'array',
