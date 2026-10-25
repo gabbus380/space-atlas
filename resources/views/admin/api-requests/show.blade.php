@@ -43,6 +43,10 @@
         <label>Expires on<input type="date" name="expires_on" value="{{ today()->addYear()->toDateString() }}"></label>
         <button class="btn sm" type="submit">Issue key</button>
       </form>
+    @elseif ($apiRequest->apiKey && \App\Support\Staff::allows(auth()->user(), 'keys'))
+      <form method="POST" action="/admin/api-keys/{{ $apiRequest->api_key_id }}/refresh">@csrf
+        <button class="btn sm" type="submit">Refresh key</button>
+      </form>
     @endif
   </div>
 </div>

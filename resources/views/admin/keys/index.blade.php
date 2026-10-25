@@ -33,7 +33,12 @@
         <td>{{ $key->name }}<br><span class="faint" style="font-size:12.5px">{{ $key->max_users }} people, until {{ $key->expires_on?->format('M j, Y') ?? 'open' }}</span></td>
         <td><code>{{ $key->prefix }}…</code></td>
         <td>{{ $key->usedToday() }} / {{ number_format($key->daily_quota) }}</td>
-        <td><form method="POST" action="/admin/api-keys/{{ $key->id }}/toggle">@csrf<button class="btn sm" type="submit">{{ $key->active ? 'Switch off' : 'Switch on' }}</button></form></td>
+        <td>
+          <div class="row">
+            <form method="POST" action="/admin/api-keys/{{ $key->id }}/refresh">@csrf<button class="btn sm" type="submit">Refresh</button></form>
+            <form method="POST" action="/admin/api-keys/{{ $key->id }}/toggle">@csrf<button class="btn sm" type="submit">{{ $key->active ? 'Switch off' : 'Switch on' }}</button></form>
+          </div>
+        </td>
       </tr>
     @empty
       <tr><td colspan="4" class="faint">None yet.</td></tr>

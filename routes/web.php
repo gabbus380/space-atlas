@@ -62,6 +62,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::post('/account/profile', [AccountController::class, 'profile'])->name('account.profile');
     Route::post('/account/coupon', [AccountController::class, 'coupon'])->name('account.coupon');
+    Route::get('/account/api', [AccountController::class, 'apiDocs'])->name('account.api');
+    Route::post('/account/api-keys/{key}/refresh', [AccountController::class, 'refreshApiKey'])->name('account.api.refresh');
     Route::post('/account/password', [AccountController::class, 'password'])->name('account.password');
     Route::get('/account/export', [AccountController::class, 'export'])->name('account.export');
     Route::post('/account/delete', [AccountController::class, 'destroy'])->name('account.delete');
@@ -123,6 +125,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/api-keys/organizations', [AccessController::class, 'organizations'])->name('admin.keys.organizations');
             Route::post('/api-keys', [AccessController::class, 'issueKey'])->name('admin.keys.store');
             Route::post('/api-keys/{key}/toggle', [AccessController::class, 'toggleKey'])->name('admin.keys.toggle');
+            Route::post('/api-keys/{key}/refresh', [AccessController::class, 'refreshKey'])->name('admin.keys.refresh');
             Route::post('/api-requests/{apiRequest}/key', [ApiRequestController::class, 'issueKey'])->name('admin.api-requests.key');
         });
 

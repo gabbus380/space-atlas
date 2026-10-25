@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApiKey;
 use App\Models\Coupon;
 use App\Support\Billing;
 use App\Support\OrganizationDirectory;
@@ -30,6 +31,7 @@ class AccountController extends Controller
             'team' => $user->team,
             'credits' => $tier === 'free' ? Plans::credits($user) : null,
             'transactions' => $user->transactions()->orderByDesc('billed_at')->limit(24)->get(),
+            'apiKeys' => $user->apiKeys(),
         ]);
     }
 
@@ -95,6 +97,25 @@ class AccountController extends Controller
         $coupon->redeem($request->user());
 
         return back()->with('status', $coupon->label().' is applied to your account.');
+    }
+
+    public function apiDocs(Request $request): View
+    {
+        $keys = $request->user()->apiKeys();
+        abort_if($keys->isEmpty(), 404);
+
+        return view('account.api', [
+            'keys' => $keys,
+            'base' => rtrim(config('app.url'), '/').'/v1',
+        ]);
+    }
+
+    public function refreshApiKey(Request $request, ApiKey $key): RedirectResponse
+    {
+        abort_unless($request->user()->apiKeys()->contains('id', $key->id), 404);
+        $plain = $key->rotate();
+
+        return redirect()->route('account.api')->with('status', 'Your new API key is below. The previous one no longer works.')->with('plain_key', $plain);
     }
 
     public function password(Request $request): RedirectResponse
