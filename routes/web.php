@@ -1,0 +1,90 @@
+<?php
+
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AtlasController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\BillingController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\WithdrawalController;
+use App\Http\Middleware\EnsureAdmin;
+use Illuminate\Support\Facades\Route;
+
+// public pages
+Route::view('/pricing', 'pricing')->name('pricing');
+Route::get('/legal', fn () => response()->file(config('atlas.html_path').'/legal.html', ['Content-Type' => 'text/html; charset=UTF-8', 'Cache-Control' => 'public, max-age=3600']))->name('legal');
+Route::redirect('/terms', '/legal#terms');
+Route::redirect('/privacy', '/legal#privacy');
+Route::redirect('/refunds', '/legal#refunds');
+Route::get('/withdraw', [WithdrawalController::class, 'create'])->name('withdraw');
+Route::post('/withdraw', [WithdrawalController::class, 'store'])->middleware('throttle:6,1');
+Route::get('/invite/{token}', [TeamController::class, 'accept'])->name('invite.accept');
+
+// sign up and sign in
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:6,1');
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/forgot-password', [PasswordController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [PasswordController::class, 'email'])->middleware('throttle:6,1')->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [PasswordController::class, 'update'])->name('password.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+    Route::post('/email/verification-notification', [VerificationController::class, 'send'])->middleware('throttle:6,1')->name('verification.send');
+
+    // inside the atlas page
+    Route::post('/app/unlock/{iso3}', [AtlasController::class, 'unlock'])->middleware('throttle:30,1');
+    Route::put('/app/watchlist', [AtlasController::class, 'saveWatchlist']);
+    Route::post('/app/watchlist/scope', [AtlasController::class, 'scope']);
+    Route::put('/app/notes/{iso3}', [AtlasController::class, 'saveNote']);
+    Route::delete('/app/notes/{iso3}', [AtlasController::class, 'deleteNote']);
+    Route::get('/app/me', [AtlasController::class, 'me']);
+
+    // account
+    Route::get('/account', [AccountController::class, 'show'])->name('account');
+    Route::post('/account/profile', [AccountController::class, 'profile'])->name('account.profile');
+    Route::post('/account/password', [AccountController::class, 'password'])->name('account.password');
+    Route::get('/account/export', [AccountController::class, 'export'])->name('account.export');
+    Route::post('/account/delete', [AccountController::class, 'destroy'])->name('account.delete');
+
+    // plans and payments (Paddle is the reseller and merchant of record)
+    Route::middleware('verified')->group(function () {
+        Route::get('/subscribe/personal', [BillingController::class, 'personal'])->name('subscribe.personal');
+        Route::get('/subscribe/teams', [BillingController::class, 'teamsForm'])->name('subscribe.teams');
+        Route::post('/subscribe/teams', [BillingController::class, 'teamsCheckout']);
+    });
+    Route::get('/billing/done', [BillingController::class, 'done'])->name('billing.done');
+    Route::post('/billing/yearly', [BillingController::class, 'yearly'])->name('billing.yearly');
+    Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
+    Route::get('/billing/payment-method', [BillingController::class, 'paymentMethod'])->name('billing.payment');
+    Route::get('/billing/invoice/{transaction}', [BillingController::class, 'invoice'])->name('billing.invoice');
+
+    // team
+    Route::get('/team', [TeamController::class, 'show'])->name('team');
+    Route::post('/team/invitations', [TeamController::class, 'invite'])->middleware('throttle:30,1')->name('team.invite');
+    Route::delete('/team/invitations/{invitation}', [TeamController::class, 'revoke'])->name('team.revoke');
+    Route::delete('/team/members/{member}', [TeamController::class, 'remove'])->name('team.remove');
+    Route::post('/team/seats', [TeamController::class, 'seats'])->name('team.seats');
+    Route::post('/team/name', [TeamController::class, 'rename'])->name('team.rename');
+    Route::post('/team/leave', [TeamController::class, 'leave'])->name('team.leave');
+
+    // EMMA only
+    Route::middleware(EnsureAdmin::class)->prefix('admin')->group(function () {
+        Route::get('/', [AdminController::class, 'show'])->name('admin');
+        Route::post('/grant', [AdminController::class, 'grant'])->name('admin.grant');
+        Route::post('/team-grant', [AdminController::class, 'teamGrant'])->name('admin.teamGrant');
+        Route::post('/revoke', [AdminController::class, 'revoke'])->name('admin.revoke');
+        Route::post('/api-keys', [AdminController::class, 'issueKey'])->name('admin.keys');
+        Route::post('/api-keys/{key}/toggle', [AdminController::class, 'toggleKey'])->name('admin.keys.toggle');
+    });
+});
