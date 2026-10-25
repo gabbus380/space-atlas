@@ -6,16 +6,16 @@
 @section('description', 'Sovereign Space ATLAS plans: Free, Personal from $'.$p['personal_year_month'].' a month billed yearly, Teams from $'.$p['teams_year_month'].' per user, and API access.')
 @section('style')
 .hero{display:flex;flex-direction:column;gap:16px;max-width:760px}
-.bill{display:inline-flex;border:1px solid var(--line-2);border-radius:3px;padding:3px;margin-top:8px;align-self:flex-start}
-.bill button{border:0;background:none;color:var(--ink-2);font:500 13px/1 var(--font);padding:10px 16px;border-radius:2px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.bill{display:inline-flex;border:1px solid var(--line-2);padding:3px;margin-top:8px;align-self:flex-start}
+.bill button{border:0;background:none;color:var(--ink-2);font:500 13px/1 var(--font);padding:10px 16px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
 .bill button[aria-pressed="true"]{background:var(--ink);color:var(--void)}
-.bill .save{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#070b14;background:var(--gold);padding:3px 6px;border-radius:999px}
+.bill .save{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:#070b14;background:var(--gold);padding:3px 6px}
 .bill button[aria-pressed="false"] .save{background:var(--gold-soft);color:var(--gold)}
 .plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:36px;align-items:stretch}
-.plan{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;position:relative}
+.plan{background:var(--panel);border:1px solid var(--line);padding:22px 20px;display:flex;flex-direction:column;gap:14px;position:relative}
 .plan.best{border:1px solid var(--gold);box-shadow:0 0 0 1px rgba(229,191,109,.25) inset}
 .plan.api{background:#0f1729}
-.plan .tag{position:absolute;top:-11px;left:18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#070b14;padding:4px 8px;border-radius:2px}
+.plan .tag{position:absolute;top:-11px;left:18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#070b14;padding:4px 8px}
 .plan .nm{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .price{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
 .price b{font-family:var(--serif);font-weight:400;font-size:52px;line-height:1}
@@ -44,7 +44,16 @@
 .faq details p{margin:10px 0 0;color:var(--ink-2);font-size:14.5px;line-height:1.6}
 .legalnote{margin-top:40px;font-size:12.5px;color:var(--ink-3);line-height:1.6;max-width:90ch}
 [data-i="month"] .y,[data-i="year"] .m{display:none!important}
+.sellers{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:28px}
+.sellers article{border:1px solid var(--line);padding:18px;display:flex;gap:14px;align-items:center;background:var(--panel)}
+.sellers img.mark{width:44px;height:44px;display:block}
+.sellers .well{background:#f6f3ec;padding:10px 12px;display:flex}
+.sellers .well img{width:120px;height:auto;display:block}
+.sellers strong{display:block;font-weight:500}
+.sellers span{color:var(--ink-2);font-size:13.5px;line-height:1.45}
+#pr .btn,#pr .pill{border-radius:0}
 @media (max-width:1040px){.plans,.assure{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:800px){.sellers{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:640px){.plans,.assure{grid-template-columns:minmax(0,1fr)}.faq{grid-template-columns:minmax(0,1fr)}.price b{font-size:46px}}
 @endsection
 @section('content')
@@ -66,9 +75,9 @@
       <p class="under">No card, no account needed.<br>A free account adds <strong>{{ config('atlas.free_files_per_month') }} full country files a month</strong>.</p>
       <ul>
         <li>World map, 13 regions, 35 alliances</li>
-        <li>Core metrics, rankings, regional overviews</li>
-        <li>Today's briefing headline and summary</li>
-        <li>Country file overviews for all 81</li>
+        <li>The 18 leading national programs: space budget, capability index and ESA status</li>
+        <li>Astronauts flown, and today's briefing headline</li>
+        <li>Country file overviews, plus {{ config('atlas.free_files_per_month') }} full files a month with an account</li>
         <li>Community: IAF, IAC hosts, 17 conferences</li>
       </ul>
       <div class="cta">
@@ -85,6 +94,9 @@
       <p class="under y">Billed <strong>${{ $p['personal_year'] }} a year</strong>. You save ${{ $p['personal_saving'] }}, which is 4 months free.</p>
       <p class="under m">Billed monthly. Yearly billing is ${{ $p['personal_year'] }}, which saves ${{ $p['personal_saving'] }}.</p>
       <ul>
+        <li>Every country, not only the leading 18</li>
+        <li>Compare, including GDP, defense, R&amp;D, space budget per capita and ESA CM25</li>
+        <li>Satellites, flight-ready astronauts, term elapsed, programs, ecosystem and tracker entries</li>
         <li>Every country file: strategy, government structure, stakeholders, sources</li>
         <li>The full daily briefing with narration and map playback</li>
         <li>A 21-day briefing archive</li>
@@ -139,6 +151,25 @@
     </article>
   </section>
 
+  <section class="sellers" aria-label="Who you are buying from">
+    <article>
+      <img class="mark" src="/apple-touch-icon.png" width="44" height="44" alt="EMMA Aerospace Consulting">
+      <div>
+        <p class="eyebrow" style="margin:0">Operator</p>
+        <strong>EMMA Aerospace Consulting LLP</strong>
+        <span>LL03251 · Richmond, British Columbia. EMMA provides Sovereign Space ATLAS.</span>
+      </div>
+    </article>
+    <article>
+      <div class="well"><img src="/brand/paddle.svg" width="120" height="35" alt="Paddle"></div>
+      <div>
+        <p class="eyebrow" style="margin:0">Merchant of record</p>
+        <strong>Paddle.com</strong>
+        <span>Paddle takes the payment, adds tax, sends the invoice and handles refunds.</span>
+      </div>
+    </article>
+  </section>
+
   <section class="assure" aria-label="Commitments">
     <div><b>14-day money-back guarantee</b>Not useful for your work? Write to us within 14 days of your first payment for a full refund.</div>
     <div><b>Founding rate</b>Subscribe by {{ $founding->format('F j, Y') }} and keep your price for as long as you stay subscribed.</div>
@@ -154,7 +185,8 @@
         <tbody>
           @foreach ([
             ['World map, 13 regions, 35 alliances and memberships', 1, 1, 1],
-            ['Core metrics, rankings and regional overviews', 1, 1, 1],
+            ['The 18 leading programs: space budget, capability index, ESA status, astronauts flown', 1, 1, 1],
+            ['Every country, Compare, GDP, defense, R&D, per capita, ESA CM25, satellites, flight-ready astronauts and term elapsed', 0, 1, 1],
             ['Space hubs, US states and German Länder', 1, 1, 1],
             ['Community: IAF members, IAC hosts, 17 conferences', 1, 1, 1],
             ["Today's briefing headline and summary", 1, 1, 1],
@@ -164,7 +196,7 @@
             ['Programs and consortia tracker', 0, 1, 1],
             ['Ecosystem registry and company engagements', 0, 1, 1],
             ['Watchlist', 'this browser', 'your account', 'yours and shared'],
-            ['Compare 212 countries', 'view', 'view', 'view and CSV'],
+            ['Compare', 0, 'view', 'view and CSV'],
             ['Shared country notes for the team', 0, 0, 1],
             ['Seat management and one invoice', 0, 0, 1],
             ['Onboarding session with an EMMA analyst', 0, 0, 1],

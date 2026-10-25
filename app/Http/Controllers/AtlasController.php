@@ -23,6 +23,9 @@ class AtlasController extends Controller
         $file = config('atlas.html_path').'/'.(Plans::isPaid($tier) ? 'index.full.html' : 'index.open.html');
         abort_unless(is_file($file), 503, 'The atlas is being updated. Try again in a minute.');
         $html = file_get_contents($file);
+        if (! Plans::isPaid($tier)) {
+            $html = \App\Support\OpenAtlas::redactHtml($html);
+        }
         $ent = '<script>window.ATLAS_ENT='.json_encode(Plans::ent($user, $request, $tier), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES).';</script>';
         $pos = strpos($html, '<!--ATLAS_ENT-->');
         if ($pos !== false) {

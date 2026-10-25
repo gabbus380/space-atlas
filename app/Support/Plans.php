@@ -47,6 +47,7 @@ class Plans
             'eco' => $paid,
             'engagements' => $paid,
             'csv' => $tier === 'teams',
+            'compare' => $paid,
             'notes' => $tier === 'teams',
             'watch' => $tier === 'teams' ? 'team' : ($tier === 'personal' ? 'account' : 'local'),
             'support' => $tier === 'teams' ? 'priority' : 'email',

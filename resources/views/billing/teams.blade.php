@@ -2,8 +2,19 @@
 @extends('layouts.site')
 @section('title', 'Start Teams')
 @section('noindex', '1')
+@section('style')
+.trust,.trust *{border-radius:0}
+.sheets{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:18px;align-items:start}
+.sheet{background:var(--panel);border:1px solid var(--line);padding:28px}
+.logo-well{background:#f6f3ec;padding:16px;display:flex;margin-bottom:8px}
+.logo-well img{width:140px;height:auto}
+.seller{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.seller img{width:44px;height:44px}
+.seller strong{display:block;font-family:var(--serif);font-size:20px;font-weight:400}
+.seller span,.fine{color:var(--ink-2);font-size:13.5px;line-height:1.5}
+@endsection
 @section('content')
-<div class="grid2" style="align-items:start">
+<div class="trust grid2" style="align-items:start">
   <div class="stack">
     <span class="eyebrow">Teams</span>
     <h1 class="h2">Set up your team</h1>
@@ -24,7 +35,16 @@
       <div class="row"><button class="btn gold" type="submit" @disabled($memberOf)>Continue to checkout</button><a class="btn link" href="/pricing">Back to plans</a></div>
     </form>
   </div>
-  <aside class="card stack">
+  <aside class="sheet stack">
+    <div class="seller">
+      <img src="/apple-touch-icon.png" width="44" height="44" alt="EMMA Aerospace Consulting">
+      <div>
+        <strong>EMMA Aerospace Consulting LLP</strong>
+        <span>LL03251 · Richmond, BC</span>
+      </div>
+    </div>
+    <div class="logo-well"><img src="/brand/paddle.svg" width="140" height="41" alt="Paddle"></div>
+    <p class="eyebrow" style="margin:0">Merchant of record</p>
     <h2 class="h3">What the team gets</h2>
     <ul class="muted" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
       <li>Everything in Personal for every seat</li>

@@ -21,6 +21,14 @@ class AtlasAccessTest extends TestCase
         return json_decode($m[1], true);
     }
 
+    private function embeddedAtlas(string $html): array
+    {
+        $data = \App\Support\OpenAtlas::embedded($html);
+        $this->assertIsArray($data);
+
+        return $data;
+    }
+
     private function personal(): User
     {
         $u = User::factory()->create();
@@ -53,6 +61,11 @@ class AtlasAccessTest extends TestCase
         $this->assertStringContainsString('"projects":[]', $html);
         $atlas = app(AtlasData::class)->atlas();
         $this->assertStringNotContainsString($atlas['blackhat'][0]['title'], $html);
+        $this->assertStringNotContainsString('"cm25":3600', $html);
+        $atlasJson = $this->embeddedAtlas($html);
+        $this->assertCount(18, $atlasJson['countries']);
+        $this->assertNotContains('NLD', array_column($atlasJson['countries'], 'iso3'));
+        $this->assertStringContainsString('Compare countries side by side.', $html);
     }
 
     public function test_guest_live_data_is_filtered(): void
@@ -110,6 +123,7 @@ class AtlasAccessTest extends TestCase
         $this->assertFalse($ent['features']['csv']);
         $atlas = app(AtlasData::class)->atlas();
         $this->assertStringContainsString($atlas['blackhat'][0]['title'], $html);
+        $this->assertStringContainsString('"cm25":3600', $html);
 
         $j = $this->getJson('/app/live')->json();
         $this->assertGreaterThan(1, count($j['collections']['briefings']));
@@ -193,5 +207,19 @@ class AtlasAccessTest extends TestCase
         $this->actingAs($owner);
         $this->assertSame('teams', $this->ent($this->get('/')->getContent())['tier']);
         $this->assertSame(5, $team->fresh()->seats());
+    }
+
+    public function test_plans_and_checkout_name_emma_and_paddle(): void
+    {
+        $this->get('/pricing')->assertOk()
+            ->assertSee('/brand/paddle.svg', false)
+            ->assertSee('EMMA Aerospace Consulting LLP')
+            ->assertSee('border-radius:0', false);
+        $this->actingAs(User::factory()->create())
+            ->get('/subscribe/personal?interval=year')
+            ->assertOk()
+            ->assertSee('/brand/paddle.svg', false)
+            ->assertSee('Merchant of record')
+            ->assertSee('border-radius:0', false);
     }
 }
