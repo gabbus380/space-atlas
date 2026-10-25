@@ -13,8 +13,13 @@ use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function create(): View
+    public function create(Request $request): View
     {
+        $next = (string) $request->query('next', '');
+        if (str_starts_with($next, '/') && ! str_starts_with($next, '//')) {
+            redirect()->setIntendedUrl($next);
+        }
+
         return view('auth.login');
     }
 

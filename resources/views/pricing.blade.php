@@ -134,7 +134,7 @@
         <li>Larger use by quote</li>
       </ul>
       <div class="cta">
-        <a class="btn" href="mailto:{{ config('atlas.contact') }}?subject=Sovereign%20Space%20ATLAS%20API%20Order%20Form">Request an Order Form</a>
+        <a class="btn" href="/api-order">Request an Order Form</a>
       </div>
     </article>
   </section>

@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AccessController;
+use App\Http\Controllers\Admin\ApiRequestController;
 use App\Http\Controllers\Admin\DirectoryController;
 use App\Http\Controllers\Admin\PeopleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApiOrderController;
 use App\Http\Controllers\AtlasController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -19,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 // public pages
 Route::view('/pricing', 'pricing')->name('pricing');
+Route::get('/api-order', [ApiOrderController::class, 'create'])->name('api-order');
+Route::post('/api-order', [ApiOrderController::class, 'store'])->middleware('throttle:6,1');
+Route::get('/api-order/received', [ApiOrderController::class, 'done'])->name('api-order.done');
 Route::get('/legal', fn () => response()->file(config('atlas.html_path').'/legal.html', ['Content-Type' => 'text/html; charset=UTF-8', 'Cache-Control' => 'public, max-age=3600']))->name('legal');
 Route::redirect('/terms', '/legal#terms');
 Route::redirect('/privacy', '/legal#privacy');
@@ -93,6 +98,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/users/{user}/grant', [PeopleController::class, 'grant'])->name('admin.users.grant');
             Route::post('/users/{user}/revoke', [PeopleController::class, 'revoke'])->name('admin.users.revoke');
             Route::post('/users/{user}/verify', [PeopleController::class, 'verify'])->name('admin.users.verify');
+            Route::post('/users/{user}/convert-team', [PeopleController::class, 'convertToTeam'])->name('admin.users.convert-team');
             Route::delete('/users/{user}', [PeopleController::class, 'destroy'])->name('admin.users.destroy');
             Route::get('/teams', [PeopleController::class, 'teams'])->name('admin.teams');
             Route::get('/teams/{team}', [PeopleController::class, 'team'])->name('admin.teams.show');
@@ -100,6 +106,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/teams/{team}/revoke', [PeopleController::class, 'teamRevoke'])->name('admin.teams.revoke');
             Route::get('/withdrawals', [PeopleController::class, 'withdrawals'])->name('admin.withdrawals');
             Route::post('/withdrawals/{withdrawal}', [PeopleController::class, 'withdrawal'])->name('admin.withdrawals.update');
+            Route::get('/api-requests', [ApiRequestController::class, 'index'])->name('admin.api-requests');
+            Route::get('/api-requests/{apiRequest}', [ApiRequestController::class, 'show'])->name('admin.api-requests.show');
+            Route::post('/api-requests/{apiRequest}', [ApiRequestController::class, 'update'])->name('admin.api-requests.update');
             Route::get('/coupons', [AccessController::class, 'coupons'])->name('admin.coupons');
             Route::post('/coupons', [AccessController::class, 'storeCoupon'])->name('admin.coupons.store');
             Route::post('/coupons/{coupon}/toggle', [AccessController::class, 'toggleCoupon'])->name('admin.coupons.toggle');
@@ -114,6 +123,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/api-keys/organizations', [AccessController::class, 'organizations'])->name('admin.keys.organizations');
             Route::post('/api-keys', [AccessController::class, 'issueKey'])->name('admin.keys.store');
             Route::post('/api-keys/{key}/toggle', [AccessController::class, 'toggleKey'])->name('admin.keys.toggle');
+            Route::post('/api-requests/{apiRequest}/key', [ApiRequestController::class, 'issueKey'])->name('admin.api-requests.key');
         });
 
         Route::middleware(EnsureStaff::class.':settings')->group(function () {

@@ -25,6 +25,17 @@
       <button class="btn sm" type="submit">Grant</button>
     </form>
     <form method="POST" action="/admin/users/{{ $user->id }}/revoke">@csrf<button class="btn sm" type="submit">Revoke complimentary access</button></form>
+    @if ($tier !== 'teams')
+      <form class="card form" method="POST" action="/admin/users/{{ $user->id }}/convert-team">@csrf
+        <h2 class="h3">Convert to Teams</h2>
+        <label>Team name<input type="text" name="name" value="{{ $user->organization ?: $user->name }}" required></label>
+        <div class="row">
+          <label style="flex:1">Seats<input type="number" name="seats" value="{{ config('atlas.teams_min_seats') }}" min="{{ config('atlas.teams_min_seats') }}" required></label>
+          <label style="flex:1">Days<input type="number" name="days" value="365" min="1" required></label>
+        </div>
+        <button class="btn sm" type="submit">Convert account</button>
+      </form>
+    @endif
     @unless($user->email_verified_at)
       <form method="POST" action="/admin/users/{{ $user->id }}/verify">@csrf<button class="btn sm" type="submit">Confirm email</button></form>
     @endunless
