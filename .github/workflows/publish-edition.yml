@@ -6,6 +6,14 @@ on:
     - cron: "0 5 * * *"
     - cron: "40 5 * * *"
   workflow_dispatch:
+    inputs:
+      destination:
+        description: Where to publish
+        type: choice
+        options:
+          - both
+          - staging
+        default: both
 
 permissions:
   contents: write
@@ -57,4 +65,7 @@ jobs:
           day=$(python3 -c "import json; print(next(iter(json.load(open('resources/atlas/data/live.json'))['collections']['briefings'])))")
           git commit -m "Publish the ${day} briefing."
           git push origin HEAD:staging
-          git push origin HEAD:main
+          dest="${{ github.event.inputs.destination }}"
+          if [ -z "$dest" ] || [ "$dest" = "both" ]; then
+            git push origin HEAD:main
+          fi
