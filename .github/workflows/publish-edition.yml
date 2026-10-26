@@ -17,6 +17,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Check out staging
         uses: actions/checkout@v4
@@ -29,6 +30,17 @@ jobs:
 
       - name: Fetch the edition drop
         run: git clone --depth 1 https://github.com/gabbus380/space-atlas-editions.git /tmp/editions
+
+      - name: Record the narration
+        run: |
+          python3 .github/scripts/narrate_edition.py --self-test
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng
+          python3 -m pip install --upgrade kokoro-onnx soundfile numpy
+          mkdir -p "$RUNNER_TEMP/kokoro"
+          curl -fsSL -o "$RUNNER_TEMP/kokoro/kokoro-v1.0.onnx" https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/kokoro-v1.0.onnx
+          curl -fsSL -o "$RUNNER_TEMP/kokoro/voices-v1.0.bin" https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/voices-v1.0.bin
+          python3 .github/scripts/narrate_edition.py --editions /tmp/editions --model "$RUNNER_TEMP/kokoro/kokoro-v1.0.onnx" --voices "$RUNNER_TEMP/kokoro/voices-v1.0.bin"
 
       - name: Publish a checked edition
         run: python3 .github/scripts/publish_edition.py --editions /tmp/editions --live resources/atlas/data/live.json --audio-dir resources/atlas/audio

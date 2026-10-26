@@ -114,10 +114,18 @@ def audio_source(root: Path, day: str) -> Path | None:
     return path
 
 
+def has_audio(payload: dict) -> bool:
+    audio = payload.get("audio")
+    return isinstance(audio, dict) and bool(audio.get("url") or audio.get("seconds"))
+
+
 def newer(candidate: dict, current: dict | None) -> bool:
     if current is None:
         return True
-    return str(candidate.get("generated_at") or "") > str(current.get("generated_at") or "")
+    if str(candidate.get("generated_at") or "") > str(current.get("generated_at") or ""):
+        return True
+    # A later recording can arrive after the text. Publish that once.
+    return has_audio(candidate) and not has_audio(current)
 
 
 def publish(editions: Path, live_path: Path, audio_dir: Path, today: date | None = None) -> list[str]:
@@ -195,6 +203,14 @@ def self_test() -> None:
         assert published == ["2026-10-26"], published
         again = publish(editions, live, root / "audio", date(2026, 10, 26))
         assert again == [], again
+
+        spoken = dict(good, audio={"url": "app/audio/brief_2026-10-26.mp4", "seconds": 1.2})
+        (editions / "briefings" / "2026-10-26.json").write_text(json.dumps(spoken), encoding="utf-8")
+        (editions / "audio" / "brief_2026-10-26.mp4").write_bytes(b"0" * 1200)
+        caught = publish(editions, live, root / "audio", date(2026, 10, 26))
+        assert caught == ["2026-10-26"], caught
+        saved = json.loads(live.read_text(encoding="utf-8"))["collections"]["briefings"]["2026-10-26"]
+        assert saved["audio"]["url"] == "app/audio/brief_2026-10-26.mp4"
 
         leaked = dict(good, generated_at="2026-10-26T05:00:00+00:00", summary=["sk-ant-this-must-not-publish"])
         (editions / "briefings" / "2026-10-26.json").write_text(json.dumps(leaked), encoding="utf-8")
