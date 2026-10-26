@@ -92,8 +92,16 @@ def sources_in(data: dict) -> list[dict]:
     return found
 
 
-def fetch(url: str, timeout: int) -> tuple[int, bytes]:
-    request = Request(url, headers=UA)
+BROWSER = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/rss+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+BLOCKED_TITLE = re.compile(r"403 forbidden|access denied|security checkpoint|just a moment", re.I)
+
+
+def fetch(url: str, timeout: int, headers: dict | None = None) -> tuple[int, bytes]:
+    request = Request(url, headers=headers or UA)
     context = ssl.create_default_context()
     with urlopen(request, timeout=timeout, context=context) as response:
         return response.status, response.read(1_500_000)
@@ -121,7 +129,8 @@ def parse_feed(body: bytes, page_url: str) -> list[dict]:
                 "title": clean(title, 240),
                 "url": urljoin(page_url, link) if link else page_url,
                 "date": when,
-                "summary": clean(summary, 500),
+                "summary": clean(summary, 800),
+                "via": "feed",
             })
     return items
 
@@ -165,7 +174,7 @@ def parse_listing(body: bytes, page_url: str) -> list[dict]:
         if absolute in seen or absolute.rstrip("/") == page_url.rstrip("/"):
             continue
         seen.add(absolute)
-        items.append({"title": title, "url": absolute, "date": "", "summary": ""})
+        items.append({"title": title, "url": absolute, "date": "", "summary": "", "via": "page"})
         if len(items) == 12:
             break
     return items
@@ -191,6 +200,44 @@ def recent(items: list[dict], cutoff: datetime) -> list[dict]:
     return kept or items[:8]
 
 
+def parse_jina(text: str, page_url: str) -> list[dict] | None:
+    title = ""
+    for line in text.splitlines():
+        if line.startswith("Title:"):
+            title = line.split(":", 1)[1].strip()
+            break
+    if BLOCKED_TITLE.search(title):
+        return None
+    items = []
+    pattern = re.compile(
+        r"#### \[([^\]]+)\]\((https?://[^)]+)\)\s+(.+?)(?:\n+Published on:\s*([^\n]+))?",
+        re.S,
+    )
+    for match in pattern.finditer(text):
+        items.append({
+            "title": clean(match.group(1), 240),
+            "url": match.group(2),
+            "date": (match.group(4) or "").strip(),
+            "summary": clean(match.group(3), 800),
+            "via": "text-reader",
+        })
+        if len(items) == 12:
+            break
+    if items:
+        return items
+    body = text.split("Markdown Content:", 1)[-1]
+    summary = clean(body, 1200)
+    if not summary:
+        return None
+    return [{
+        "title": clean(title or page_url, 240),
+        "url": page_url,
+        "date": "",
+        "summary": summary,
+        "via": "text-reader",
+    }]
+
+
 def read_source(source: dict, cutoff: datetime, timeout: int, articles: int) -> dict:
     result = {
         "name": source.get("name"),
@@ -204,13 +251,33 @@ def read_source(source: dict, cutoff: datetime, timeout: int, articles: int) -> 
         "error": "",
         "items": [],
     }
-    if source.get("reachable") is False:
-        result["error"] = "marked unreachable"
-        return result
-    try:
-        _status, body = fetch(source["url"], timeout)
-    except Exception as error:
-        result["error"] = type(error).__name__
+    body = b""
+    via = "direct"
+    # A direct read first, then a normal browser header, then a text reader for pages that block scripts.
+    for headers in (None if source.get("reachable") is False else UA, BROWSER):
+        if headers is None:
+            continue
+        try:
+            _status, body = fetch(source["url"], timeout, headers)
+            via = "direct"
+            break
+        except Exception as error:
+            result["error"] = type(error).__name__
+            body = b""
+    if not body:
+        try:
+            _status, reader = fetch("https://r.jina.ai/" + source["url"], max(timeout, 25), UA)
+            parsed = parse_jina(reader.decode("utf-8", "replace"), source["url"])
+        except Exception as error:
+            result["error"] = result["error"] or type(error).__name__
+            return result
+        if not parsed:
+            result["error"] = result["error"] or "blocked"
+            return result
+        result["items"] = recent(parsed, cutoff)[:20]
+        result["kind"] = "text-reader"
+        result["ok"] = True
+        result["error"] = ""
         return result
     head = body[:400].lower()
     try:
@@ -230,6 +297,84 @@ def read_source(source: dict, cutoff: datetime, timeout: int, articles: int) -> 
     return result
 
 
+SPACE = re.compile(
+    r"space|satellite|orbit|rocket|nasa|esa\b|jaxa|isro|roscosmos|lunar|\bmars\b|\bmoon\b|astronaut|cosmos|spacecraft|starlink|artemis|launcher|спутник|космос|ракет|espace|weltraum|raumfahrt|spaziale|satellit|espacio|\buzay\b|宇宙|衛星|로켓|위성|satelita|księżyc",
+    re.I,
+)
+
+
+def space_item(source: dict, item: dict) -> bool:
+    if source.get("role") in {"space_press", "company"}:
+        return True
+    return bool(SPACE.search(f"{item.get('title', '')} {item.get('summary', '')}"))
+
+
+def write_markdown(packet: dict, path: str) -> None:
+    names = {
+        "americas": "Americas",
+        "esa_eu": "ESA and EU",
+        "west": "Western and Southern Europe",
+        "cee": "Central and Eastern Europe",
+        "nordics": "Nordics",
+        "eurasia": "Eurasia and Central Asia",
+        "mena": "Türkiye, Middle East and Africa",
+        "asia_pac": "Asia Pacific",
+    }
+    cutoff = datetime.now(timezone.utc) - timedelta(days=packet["window_days"])
+    lines = [
+        "# ATLAS reading packet",
+        "",
+        f"Collected {packet['collected_at']}. This file is context for the editor. It is not the edition.",
+        "Each item is a headline already fetched from a feed or a newsroom page. A text-reader item was taken from a page that blocks a normal download.",
+        "High confidence is still three independent sources, or five when the national-language and official mix is missing. Medium is two. Low is one, and the summary must say so.",
+        "",
+    ]
+    groups: dict[str, list] = {}
+    for source in packet["sources"]:
+        groups.setdefault(source.get("desk") or "wider", []).append(source)
+    order = ["wider", "americas", "esa_eu", "west", "cee", "nordics", "eurasia", "mena", "asia_pac"]
+    for key in order:
+        block = groups.get(key) or []
+        lines.append(f"## {names.get(key, 'Wider reading')}")
+        lines.append("")
+        by_country: dict[str, list] = {}
+        for source in block:
+            by_country.setdefault(source.get("iso3") or "General", []).append(source)
+        for iso3, sources in by_country.items():
+            if iso3 != "General":
+                lines.append(f"### {iso3}")
+                lines.append("")
+            for source in sources:
+                chosen = []
+                for item in source["items"]:
+                    when = parse_date(item.get("date"))
+                    if when is not None and when < cutoff:
+                        continue
+                    if not space_item(source, item):
+                        continue
+                    chosen.append(item)
+                if not chosen and source["items"]:
+                    chosen = source["items"][:3]
+                if not chosen:
+                    continue
+                lines.append(f"#### {source['name']} ({source.get('role')}, {source.get('language')}, {source.get('kind')})")
+                lines.append("")
+                for item in chosen[:12]:
+                    when = item.get("date") or "undated"
+                    lines.append(f"- {when} — {item['title']}")
+                    if item.get("summary"):
+                        lines.append(f"  {item['summary']}")
+                    lines.append(f"  {item['url']}")
+                lines.append("")
+    missed = [source["name"] for source in packet["sources"] if not source["ok"]]
+    lines.append("## Did not answer")
+    lines.append("")
+    lines.append(", ".join(missed) if missed else "None.")
+    lines.append("")
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(lines))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sources", required=True)
@@ -238,6 +383,7 @@ def main() -> None:
     parser.add_argument("--timeout", type=int, default=12)
     parser.add_argument("--articles", type=int, default=2)
     parser.add_argument("--workers", type=int, default=12)
+    parser.add_argument("--markdown")
     args = parser.parse_args()
     data = json.loads(open(args.sources, encoding="utf-8").read())
     rows = sources_in(data)
@@ -255,6 +401,8 @@ def main() -> None:
     }
     with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(packet, handle, ensure_ascii=False)
+    if args.markdown:
+        write_markdown(packet, args.markdown)
     ok = [row for row in done if row["ok"]]
     items = sum(len(row["items"]) for row in ok)
     print(f"sources {len(done)} read {len(ok)} failed {len(done) - len(ok)} items {items}")
