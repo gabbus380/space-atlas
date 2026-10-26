@@ -7,6 +7,9 @@
 .si .where{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55}
 .si code{font-family:var(--mono);font-size:12.5px;color:var(--gold);word-break:break-all}
 .si textarea{min-height:140px;font-family:var(--mono);font-size:12.5px}
+.legend{margin-top:18px}
+.legend table{min-width:640px}
+.legend td:first-child{width:28%;font-family:var(--mono);font-size:12.5px;color:var(--gold)}
 @endsection
 @section('content')
 <div class="stack" style="gap:8px">
@@ -15,6 +18,23 @@
   <p class="muted" style="margin:0;max-width:68ch">Paste the identifiers from Apple, Google, Microsoft and LinkedIn. Leave a secret blank to keep the one already saved. Each provider must list the redirect URL exactly.</p>
 </div>
 @include('admin.nav')
+<section class="card legend" aria-labelledby="legendH">
+  <h2 class="h3" id="legendH">What each value is</h2>
+  <p class="muted" style="margin:0">These are the only values ATLAS asks for. A secret left blank keeps the one already saved. The redirect URL is not a secret. Copy it into the provider exactly.</p>
+  <div class="tw">
+    <table class="t">
+      <thead><tr><th>Variable</th><th>What to paste</th></tr></thead>
+      <tbody>
+        @foreach (\App\Support\Connectors::SIGNIN as $slug => $provider)
+          <tr><td>{{ $provider['name'] }} redirect</td><td>Register <code>{{ $base }}/login/{{ $slug }}/callback</code> in that provider. Sign-in fails if a single character differs.</td></tr>
+          @foreach ($provider['fields'] as $field => $meta)
+            <tr><td>{{ $provider['name'] }} · {{ $meta[0] }}</td><td>{{ $meta[2] }}</td></tr>
+          @endforeach
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+</section>
 <form class="si" method="POST" action="/admin/sign-in">@csrf
   @foreach (\App\Support\Connectors::SIGNIN as $slug => $provider)
     <section class="card stack" aria-labelledby="si-{{ $slug }}">

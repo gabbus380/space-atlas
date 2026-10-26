@@ -70,10 +70,10 @@ class Connectors
             'driver' => 'apple',
             'where' => 'Apple Developer → Certificates, Identifiers & Profiles. Create a Services ID, enable Sign in with Apple, and register the redirect URL below. Create a Key with Sign in with Apple and download the .p8 file once.',
             'fields' => [
-                'client_id' => ['Services ID', false],
-                'team_id' => ['Team ID', false],
-                'key_id' => ['Key ID', false],
-                'private_key' => ['Private key (.p8 contents)', true],
+                'client_id' => ['Services ID', false, 'The Services ID you create for Sign in with Apple. It often looks like a reverse domain, for example space.emmaconsulting.atlas. Apple uses it as the client id.'],
+                'team_id' => ['Team ID', false, 'The 10-character Team ID at the top of your Apple Developer account. It is required to sign the short-lived secret Apple expects.'],
+                'key_id' => ['Key ID', false, 'The identifier of the key you created with Sign in with Apple enabled. It names which .p8 file signs the secret.'],
+                'private_key' => ['Private key (.p8 contents)', true, 'The full text of the .p8 file Apple lets you download once, including the BEGIN and END lines. Leave it blank to keep the key already saved.'],
             ],
         ],
         'google' => [
@@ -81,8 +81,8 @@ class Connectors
             'driver' => 'google',
             'where' => 'Google Cloud Console → APIs & Services → Credentials → OAuth client ID, type Web application. Add the redirect URL below.',
             'fields' => [
-                'client_id' => ['Client ID', false],
-                'client_secret' => ['Client secret', true],
+                'client_id' => ['Client ID', false, 'The OAuth client id from a Web application credential. It ends in .apps.googleusercontent.com.'],
+                'client_secret' => ['Client secret', true, 'The client secret from that same Google credential. It proves the sign-in request came from ATLAS. Leave it blank to keep the saved secret.'],
             ],
         ],
         'microsoft' => [
@@ -90,9 +90,9 @@ class Connectors
             'driver' => 'microsoft',
             'where' => 'Microsoft Entra admin center → App registrations → New registration. Under Authentication, add the redirect URL as a Web platform. Create a client secret under Certificates & secrets.',
             'fields' => [
-                'client_id' => ['Application (client) ID', false],
-                'client_secret' => ['Client secret', true],
-                'tenant' => ['Directory (tenant)', false],
+                'client_id' => ['Application (client) ID', false, 'The application id of the Entra app registration. It is a long hexadecimal identifier.'],
+                'client_secret' => ['Client secret', true, 'The secret value from Certificates & secrets, not the secret id. Leave it blank to keep the saved secret.'],
+                'tenant' => ['Directory (tenant)', false, 'Use common to allow both work and personal Microsoft accounts. Paste a tenant id only if sign-in should be limited to one directory.'],
             ],
         ],
         'linkedin' => [
@@ -100,8 +100,8 @@ class Connectors
             'driver' => 'linkedin-openid',
             'where' => 'LinkedIn Developer Portal → Create app → Auth. Add the redirect URL and request the Sign In with LinkedIn using OpenID Connect product.',
             'fields' => [
-                'client_id' => ['Client ID', false],
-                'client_secret' => ['Client secret', true],
+                'client_id' => ['Client ID', false, 'The client id on the Auth tab of your LinkedIn app, after Sign In with LinkedIn using OpenID Connect is approved.'],
+                'client_secret' => ['Client secret', true, 'The primary client secret on that same Auth tab. Leave it blank to keep the saved secret.'],
             ],
         ],
     ];
