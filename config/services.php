@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'workspace' => env('ANTHROPIC_WORKSPACE_ID'),
+        'model' => env('ANTHROPIC_MODEL'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
