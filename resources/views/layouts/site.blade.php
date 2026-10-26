@@ -88,7 +88,38 @@ footer.foot{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe
 footer.foot .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
 footer.foot nav{display:flex;flex-wrap:wrap;gap:8px 18px}
 footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:var(--ink)}
-@media (max-width:720px){.brand span{display:none}.top .wrap{gap:10px}.nav a{padding:8px 6px;letter-spacing:.08em}main{padding:32px 0 56px}.kv{grid-template-columns:minmax(0,1fr)}.kv dt{margin-top:6px}.card{padding:18px}}
+.id-stack{display:flex;flex-direction:column;gap:10px;max-width:400px}
+.id-note{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.5}
+.idbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:44px;padding:0 16px;box-sizing:border-box;text-decoration:none;font-size:15px;font-weight:600;letter-spacing:0;line-height:1}
+.idbtn svg{width:18px;height:18px;flex:none}
+.idbtn.apple{background:#fff;color:#000;border-radius:8px}
+.idbtn.apple:hover{background:#f2f2f2;color:#000}
+.idbtn.google{background:#131314;color:#e3e3e3;border:1px solid #8e918f;border-radius:4px;font-weight:500;font-family:Roboto,Arial,sans-serif}
+.idbtn.google:hover{background:#1f1f1f;color:#e3e3e3}
+.idbtn.microsoft{background:#fff;color:#5e5e5e;border:1px solid #8c8c8c;border-radius:2px;font-family:"Segoe UI",system-ui,sans-serif}
+.idbtn.microsoft:hover{background:#f3f3f3;color:#5e5e5e}
+.idbtn.linkedin{background:#0a66c2;color:#fff;border-radius:2px}
+.idbtn.linkedin:hover{background:#004182;color:#fff}
+.cookie{position:relative;z-index:5;width:auto;background:var(--panel);border-bottom:1px solid var(--line-2);padding:14px 0;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px}
+.cookie p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.5}
+.cookie .btn{flex:none;min-height:44px}
+@media (max-width:1100px){.wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}}
+@media (max-width:720px){
+  .brand span{display:none}
+  .top .wrap{flex-wrap:wrap;gap:4px 10px;min-height:56px;padding-top:8px;padding-bottom:8px}
+  .nav{width:100%;justify-content:flex-start;gap:0}
+  .nav a{min-height:44px;display:inline-flex;align-items:center;padding:8px 10px}
+  main{padding:28px 0 72px}
+  .kv{grid-template-columns:minmax(0,1fr)}
+  .kv dt{margin-top:6px}
+  .card{padding:16px}
+  input,select,textarea{font-size:16px}
+  .btn{min-height:44px}
+  .h2{font-size:32px}
+  .form,.id-stack{max-width:none}
+  .cookie{flex-direction:column;align-items:stretch}
+  .cookie .btn{align-self:flex-start}
+}
 @yield('style')
 </style>
 @stack('head')
@@ -113,6 +144,7 @@ footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:
     </nav>
   </div>
 </header>
+@include('partials.cookie-notice')
 <main>
   <div class="wrap">
     @if (request()->hasSession() && session('status'))<div class="flash" role="status">{{ session('status') }}</div>@endif

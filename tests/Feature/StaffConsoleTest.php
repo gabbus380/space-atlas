@@ -19,6 +19,7 @@ class StaffConsoleTest extends TestCase
         $this->actingAs($sales)->get('/admin')->assertOk()->assertSee('Users');
         $this->get('/admin/users')->assertOk();
         $this->get('/admin/connectors')->assertNotFound();
+        $this->get('/admin/sign-in')->assertNotFound();
         $this->get('/admin/api-keys')->assertNotFound();
         $this->get('/admin/directory')->assertNotFound();
 

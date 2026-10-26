@@ -139,6 +139,8 @@ Route::middleware('auth')->group(function () {
         Route::middleware(EnsureStaff::class.':settings')->group(function () {
             Route::get('/connectors', [SettingsController::class, 'edit'])->name('admin.connectors');
             Route::post('/connectors', [SettingsController::class, 'update'])->name('admin.connectors.update');
+            Route::get('/sign-in', [SettingsController::class, 'signIn'])->name('admin.signin');
+            Route::post('/sign-in', [SettingsController::class, 'saveSignIn'])->name('admin.signin.update');
         });
 
         Route::middleware(EnsureStaff::class.':data')->group(function () {

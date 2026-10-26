@@ -59,6 +59,88 @@ class Connectors
                 Config::set($config, $value);
             }
         }
+
+        self::applySignIn();
+    }
+
+    /** Fields an admin pastes for each sign-in provider. Secret fields stay blank to keep the saved value. */
+    public const SIGNIN = [
+        'apple' => [
+            'name' => 'Apple',
+            'driver' => 'apple',
+            'where' => 'Apple Developer → Certificates, Identifiers & Profiles. Create a Services ID, enable Sign in with Apple, and register the redirect URL below. Create a Key with Sign in with Apple and download the .p8 file once.',
+            'fields' => [
+                'client_id' => ['Services ID', false],
+                'team_id' => ['Team ID', false],
+                'key_id' => ['Key ID', false],
+                'private_key' => ['Private key (.p8 contents)', true],
+            ],
+        ],
+        'google' => [
+            'name' => 'Google',
+            'driver' => 'google',
+            'where' => 'Google Cloud Console → APIs & Services → Credentials → OAuth client ID, type Web application. Add the redirect URL below.',
+            'fields' => [
+                'client_id' => ['Client ID', false],
+                'client_secret' => ['Client secret', true],
+            ],
+        ],
+        'microsoft' => [
+            'name' => 'Microsoft',
+            'driver' => 'microsoft',
+            'where' => 'Microsoft Entra admin center → App registrations → New registration. Under Authentication, add the redirect URL as a Web platform. Create a client secret under Certificates & secrets.',
+            'fields' => [
+                'client_id' => ['Application (client) ID', false],
+                'client_secret' => ['Client secret', true],
+                'tenant' => ['Directory (tenant)', false],
+            ],
+        ],
+        'linkedin' => [
+            'name' => 'LinkedIn',
+            'driver' => 'linkedin-openid',
+            'where' => 'LinkedIn Developer Portal → Create app → Auth. Add the redirect URL and request the Sign In with LinkedIn using OpenID Connect product.',
+            'fields' => [
+                'client_id' => ['Client ID', false],
+                'client_secret' => ['Client secret', true],
+            ],
+        ],
+    ];
+
+    public static function applySignIn(): void
+    {
+        if (! Schema::hasTable('settings')) {
+            return;
+        }
+        $base = rtrim((string) config('app.url'), '/');
+        foreach (self::SIGNIN as $slug => $provider) {
+            $driver = $provider['driver'];
+            Config::set('services.'.$driver.'.redirect', $base.'/login/'.$slug.'/callback');
+            foreach ($provider['fields'] as $field => $meta) {
+                $value = Setting::get('signin.'.$slug.'.'.$field);
+                if (filled($value)) {
+                    Config::set('services.'.$driver.'.'.$field, $value);
+                }
+            }
+        }
+    }
+
+    public static function signInReady(string $slug): bool
+    {
+        $provider = self::SIGNIN[$slug] ?? null;
+        if (! $provider) {
+            return false;
+        }
+        $driver = $provider['driver'];
+        if (! filled(config('services.'.$driver.'.client_id'))) {
+            return false;
+        }
+        if ($slug === 'apple') {
+            return filled(config('services.apple.team_id'))
+                && filled(config('services.apple.key_id'))
+                && filled(config('services.apple.private_key'));
+        }
+
+        return filled(config('services.'.$driver.'.client_secret'));
     }
 
     public static function ai(): array

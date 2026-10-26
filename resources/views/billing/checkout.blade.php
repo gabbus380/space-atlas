@@ -15,8 +15,9 @@
 .seller img{width:48px;height:48px;display:block}
 .seller strong{display:block;font-family:var(--serif);font-size:22px;font-weight:400;color:var(--ink)}
 .seller span{color:var(--ink-2);font-size:13.5px}
-.sheets{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px;align-items:start}
-.sheet,.merchant{background:var(--panel);border:1px solid var(--line);padding:28px}
+.sheets{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px;align-items:stretch}
+.sheet,.merchant{background:var(--panel);border:1px solid var(--line);padding:28px;min-width:0;height:100%;overflow:hidden}
+.sheet p,.merchant li,.fine,.seller span{overflow-wrap:anywhere}
 .sheet h1{font-family:var(--serif);font-weight:400;font-size:40px;line-height:1.05;margin:8px 0 0}
 .price-line{display:flex;align-items:baseline;gap:10px;margin:18px 0 8px}
 .price-line b{font-family:var(--serif);font-weight:400;font-size:56px;line-height:1}
@@ -32,12 +33,12 @@
 .logo-well img{width:168px;height:auto;display:block}
 .merchant ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;color:var(--ink-2);font-size:14.5px;line-height:1.45}
 .merchant li{padding-left:14px;border-left:2px solid var(--gold)}
-.fine{margin:0;color:var(--ink-3);font-size:12.5px;line-height:1.6}
+.fine{margin:0;margin-top:auto;color:var(--ink-3);font-size:12.5px;line-height:1.6}
 .trust .btn{border-radius:0}
 .trust a.pay{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;background:#4fbf8f;border:1px solid #4fbf8f;color:#06281c;font:600 17px/1.2 var(--font);letter-spacing:.01em;padding:18px 22px;border-radius:0;text-decoration:none}
 .trust a.pay::before{content:"";width:18px;height:18px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='7' width='10' height='7.2' fill='none' stroke='%2306281c' stroke-width='1.6'/%3E%3Cpath d='M5.2 7V5a2.8 2.8 0 015.6 0v2' fill='none' stroke='%2306281c' stroke-width='1.6'/%3E%3C/svg%3E") center/18px 18px no-repeat}
 .trust a.pay:hover{filter:brightness(1.08);color:#06281c}
-@media (max-width:800px){.sheets{grid-template-columns:minmax(0,1fr)}.price-line b{font-size:44px}.facts div{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:800px){.sheets{grid-template-columns:minmax(0,1fr)}.sheet,.merchant{height:auto;overflow:visible}.price-line b{font-size:40px}.sheet h1{font-size:32px}.facts div{grid-template-columns:minmax(0,1fr)}.seller{align-items:flex-start}}
 @endsection
 @section('content')
 <div class="trust">
