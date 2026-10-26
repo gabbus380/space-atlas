@@ -15,7 +15,7 @@
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" bgcolor="#070b14" style="width:100%;max-width:600px;background:#070b14;">
 <tr>
 <td style="padding:8px 8px 20px;">
-<img src="{{ $letter->logoUrl() }}" width="36" height="36" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:8px;">
+<img src="{{ $letter->logoUrl() }}" width="36" height="36" alt="" style="display:inline-block;vertical-align:middle;border:0;">
 <span style="display:inline-block;vertical-align:middle;margin-left:12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.16);font-family:Georgia,'Times New Roman',serif;font-size:20px;line-height:36px;color:#e6eaf1;">Sovereign Space <span style="color:#e5bf6d;">ATLAS</span></span>
 </td>
 </tr>
@@ -80,7 +80,7 @@
 <td style="padding:18px 8px 8px;">
 <table role="presentation" cellpadding="0" cellspacing="0">
 <tr>
-<td bgcolor="#e5bf6d" style="background:#e5bf6d;border-radius:2px;">
+<td bgcolor="#e5bf6d" style="background:#e5bf6d;">
 <a href="{{ $letter->actionUrl }}" style="display:inline-block;padding:14px 22px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;line-height:1;color:#070b14;text-decoration:none;">{{ $letter->actionLabel }}</a>
 </td>
 </tr>

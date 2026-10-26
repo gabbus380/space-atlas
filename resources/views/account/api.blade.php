@@ -4,7 +4,7 @@
 @section('style')
 .doc{max-width:760px}
 .doc code, .doc pre{font-family:var(--mono);font-size:13px}
-.doc pre{background:var(--space);border:1px solid var(--line);border-radius:2px;padding:14px 16px;overflow-x:auto;margin:0}
+.doc pre{background:var(--space);border:1px solid var(--line);padding:14px 16px;overflow-x:auto;margin:0}
 .doc h2{margin-top:8px}
 .endpoint{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
 .endpoint b{font-family:var(--mono);font-weight:500;font-size:13px;color:var(--gold);letter-spacing:.04em}
