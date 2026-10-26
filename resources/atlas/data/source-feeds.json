@@ -1,7 +1,7 @@
 {
   "version": "2026-10-26",
   "checked_on": "2026-10-26",
-  "how_to_use": "Read every feed and newsroom here before searching the open web. A fresh item needs three independent sources, one in the country's own language and one from a government or embassy page. If that mix cannot be found, it needs five independent sources. The same wire reprinted by several sites counts once. A company page is a company source, not a government source and not a second press source. reachable false means the official page exists but refused or timed out on an automated read on this date.",
+  "how_to_use": "Read every feed and newsroom here before searching the open web. Prefer three independent sources, including one in the country's own language and one government or embassy page. Five independent sources still counts as high when that mix cannot be found. Medium confidence is two independent sources from this list. Low confidence is one named source from this list, and the summary must say so. Put confidence on the item as high, medium, or low. The same wire reprinted by several sites counts once. A company page is a company source, not a government source and not a second press source. Social media, aggregators, and Wikipedia do not count. reachable false means the official page exists but refused or timed out on an automated read on 26 October 2026.",
   "global": {
     "space_press": [
       {
