@@ -1,0 +1,48 @@
+name: Publish briefing
+
+on:
+  schedule:
+    # Before the 06:20 UTC briefing email. A second pass catches a late file.
+    - cron: "0 5 * * *"
+    - cron: "40 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-briefing
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out staging
+        uses: actions/checkout@v4
+        with:
+          ref: staging
+          fetch-depth: 0
+
+      - name: Check the publisher
+        run: python3 .github/scripts/publish_edition.py --self-test
+
+      - name: Fetch the edition drop
+        run: git clone --depth 1 https://github.com/gabbus380/space-atlas-editions.git /tmp/editions
+
+      - name: Publish a checked edition
+        run: python3 .github/scripts/publish_edition.py --editions /tmp/editions --live resources/atlas/data/live.json --audio-dir resources/atlas/audio
+
+      - name: Push staging and main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add resources/atlas/data/live.json resources/atlas/audio
+          if git diff --cached --quiet; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          day=$(python3 -c "import json; print(next(iter(json.load(open('resources/atlas/data/live.json'))['collections']['briefings'])))")
+          git commit -m "Publish the ${day} briefing."
+          git push origin HEAD:staging
+          git push origin HEAD:main
