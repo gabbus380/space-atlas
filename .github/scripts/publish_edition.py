@@ -43,6 +43,16 @@ SECRET = re.compile(
 MAX_JSON = 1_500_000
 MAX_AUDIO = 30_000_000
 KEEP = 21
+REGIONS = (
+    "esa_eu",
+    "cee",
+    "nordics",
+    "west",
+    "eurasia",
+    "mena",
+    "asia_pac",
+    "americas",
+)
 
 
 def fail(message: str) -> None:
@@ -88,6 +98,7 @@ def check_edition(payload: dict, day: str) -> None:
     for key in ("regions", "countries"):
         if key in payload and not isinstance(payload[key], list):
             fail(f"{day}: {key} must be a list.")
+    check_regions(payload, day)
     audio = payload.get("audio")
     if audio is not None:
         if not isinstance(audio, dict):
@@ -101,6 +112,27 @@ def check_edition(payload: dict, day: str) -> None:
         fail(f"{day}: the file contains a secret and was refused.")
     if re.search(r"<\s*script|javascript\s*:|onerror\s*=", text, re.I):
         fail(f"{day}: the file contains markup the site will not publish.")
+
+
+def check_regions(payload: dict, day: str) -> None:
+    """Every edition carries all eight desks, each with something to read."""
+    regions = payload.get("regions")
+    if not isinstance(regions, list):
+        fail(f"{day}: regions must list all eight desks.")
+    by_id = {}
+    for region in regions:
+        if isinstance(region, dict) and region.get("id"):
+            by_id[region["id"]] = region
+    for region_id in REGIONS:
+        region = by_id.get(region_id)
+        if region is None:
+            fail(f"{day}: the {region_id} desk is missing.")
+        items = region.get("items")
+        if not isinstance(items, list) or not items:
+            fail(f"{day}: the {region_id} desk has no item.")
+        for item in items:
+            if not isinstance(item, dict) or not str(item.get("title") or "").strip() or not str(item.get("summary") or "").strip():
+                fail(f"{day}: every {region_id} item needs a title and a summary.")
 
 
 def audio_source(root: Path, day: str) -> Path | None:
@@ -194,7 +226,10 @@ def self_test() -> None:
             "generated_at": "2026-10-26T04:00:00+00:00",
             "headline": "A normal headline for the morning edition.",
             "global": [{"title": "One story", "summary": "What happened, and who said it."}],
-            "regions": [],
+            "regions": [
+                {"id": region_id, "name": region_id, "items": [{"title": "Desk note", "summary": "What the desk filed."}]}
+                for region_id in REGIONS
+            ],
             "countries": [],
         }
         (editions / "briefings" / "2026-10-26.json").write_text(json.dumps(good), encoding="utf-8")
@@ -211,6 +246,17 @@ def self_test() -> None:
         assert caught == ["2026-10-26"], caught
         saved = json.loads(live.read_text(encoding="utf-8"))["collections"]["briefings"]["2026-10-26"]
         assert saved["audio"]["url"] == "app/audio/brief_2026-10-26.mp4"
+
+        thin = json.loads(json.dumps(good))
+        thin["generated_at"] = "2026-10-26T06:00:00+00:00"
+        thin["regions"] = [region for region in thin["regions"] if region["id"] != "nordics"]
+        (editions / "briefings" / "2026-10-26.json").write_text(json.dumps(thin), encoding="utf-8")
+        try:
+            publish(editions, live, root / "audio", date(2026, 10, 26))
+        except SystemExit as error:
+            assert "nordics" in str(error), error
+        else:
+            raise AssertionError("a desk was skipped")
 
         leaked = dict(good, generated_at="2026-10-26T05:00:00+00:00", summary=["sk-ant-this-must-not-publish"])
         (editions / "briefings" / "2026-10-26.json").write_text(json.dumps(leaked), encoding="utf-8")
