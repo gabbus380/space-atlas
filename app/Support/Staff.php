@@ -61,6 +61,7 @@ class Staff
         }
         if (self::allows($user, 'settings')) {
             $links['/admin/connectors'] = 'Connectors';
+            $links['/admin/sign-in'] = 'Sign-in';
         }
 
         return $links;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Connectors;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -93,6 +94,6 @@ class SocialController extends Controller
 
     private function configured(string $provider): bool
     {
-        return filled(config('services.'.$this->driver($provider).'.client_id'));
+        return Connectors::signInReady($provider);
     }
 }

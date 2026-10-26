@@ -54,7 +54,7 @@
 #pr .btn,#pr .pill{border-radius:0}
 @media (max-width:1040px){.plans,.assure{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:800px){.sellers{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:640px){.plans,.assure{grid-template-columns:minmax(0,1fr)}.faq{grid-template-columns:minmax(0,1fr)}.price b{font-size:46px}}
+@media (max-width:640px){.plans,.assure{grid-template-columns:minmax(0,1fr)}.faq{grid-template-columns:minmax(0,1fr)}.price b{font-size:44px}.bill{width:100%}.bill button{flex:1;justify-content:center;min-height:44px}.plan{padding:18px 16px}.faq summary{min-height:44px;align-items:center}}
 @endsection
 @section('content')
 <div id="pr" data-i="year">
