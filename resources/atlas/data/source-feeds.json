@@ -423,6 +423,26 @@
         "role": "defence",
         "reachable": true
       }
+    ],
+    "discovery": [
+      {
+        "name": "Reports on Roscosmos",
+        "url": "https://news.google.com/rss/search?q=Roscosmos+OR+%D0%A0%D0%BE%D1%81%D0%BA%D0%BE%D1%81%D0%BC%D0%BE%D1%81+when:7d&hl=en-US&gl=US&ceid=US:en",
+        "kind": "feed",
+        "language": "en",
+        "role": "discovery",
+        "reachable": true,
+        "note": "Roscosmos blocks a direct read. These are leads to outlets that reported it. Google is not itself a source for the confidence count."
+      },
+      {
+        "name": "Reports on Blue Origin",
+        "url": "https://news.google.com/rss/search?q=%22Blue+Origin%22+when:7d&hl=en-US&gl=US&ceid=US:en",
+        "kind": "feed",
+        "language": "en",
+        "role": "discovery",
+        "reachable": true,
+        "note": "Blue Origin's newsroom blocks automated reads. These are leads. Google is not itself a source for the confidence count."
+      }
     ]
   },
   "companies": [
@@ -1234,9 +1254,9 @@
               "reachable": true
             },
             {
-              "name": "ESA Poland feed",
-              "url": "https://www.esa.int/rssfeed/Poland",
-              "kind": "feed",
+              "name": "ESA in Poland",
+              "url": "https://www.esa.int/ESA_in_your_country/Poland",
+              "kind": "newsroom",
               "language": "en",
               "role": "government",
               "reachable": true
@@ -1492,6 +1512,15 @@
               "language": "ru",
               "role": "national_press",
               "reachable": true
+            },
+            {
+              "name": "Interfax",
+              "url": "https://www.interfax.ru/rss.asp",
+              "kind": "feed",
+              "language": "ru",
+              "role": "national_press",
+              "reachable": true,
+              "note": "A Russian news agency. Use it when Roscosmos itself does not answer."
             }
           ]
         }
@@ -1747,6 +1776,15 @@
               "language": "en",
               "role": "us_embassy",
               "reachable": true
+            },
+            {
+              "name": "Japan Ministry of Foreign Affairs press",
+              "url": "https://www.mofa.go.jp/press/release/index.html",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": false,
+              "note": "The site blocks a direct download. The reader fetches it through a text reader."
             }
           ]
         },
@@ -1860,5 +1898,5 @@
       ]
     }
   },
-  "source_count": 200
+  "source_count": 204
 }
