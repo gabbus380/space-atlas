@@ -1,0 +1,1864 @@
+{
+  "version": "2026-10-26",
+  "checked_on": "2026-10-26",
+  "how_to_use": "Read every feed and newsroom here before searching the open web. A fresh item needs three independent sources, one in the country's own language and one from a government or embassy page. If that mix cannot be found, it needs five independent sources. The same wire reprinted by several sites counts once. A company page is a company source, not a government source and not a second press source. reachable false means the official page exists but refused or timed out on an automated read on this date.",
+  "global": {
+    "space_press": [
+      {
+        "name": "Space.com",
+        "url": "https://www.space.com/feeds/all",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "SpaceNews",
+        "url": "https://spacenews.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "Spaceflight Now",
+        "url": "https://spaceflightnow.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "Payload",
+        "url": "https://payloadspace.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "NASASpaceflight",
+        "url": "https://www.nasaspaceflight.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "Ars Technica science",
+        "url": "https://feeds.arstechnica.com/arstechnica/science",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "The Verge space",
+        "url": "https://www.theverge.com/rss/space/index.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "MIT Technology Review space",
+        "url": "https://www.technologyreview.com/topic/space/feed",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "Universe Today",
+        "url": "https://www.universetoday.com/feed",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "SpaceQ",
+        "url": "https://www.spaceq.ca/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "SpacePolicyOnline",
+        "url": "https://www.spacepolicyonline.com/feed",
+        "kind": "feed",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true
+      },
+      {
+        "name": "CNN science",
+        "url": "https://www.cnn.com/science",
+        "kind": "newsroom",
+        "language": "en",
+        "role": "space_press",
+        "reachable": true,
+        "note": "CNN's old space RSS no longer answers. Read the science section."
+      }
+    ],
+    "international_press": [
+      {
+        "name": "BBC science and environment",
+        "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "The Guardian space",
+        "url": "https://www.theguardian.com/science/space/rss",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "NBC News",
+        "url": "https://feeds.nbcnews.com/nbcnews/public/news",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "New York Times space",
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/Space.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Al Jazeera",
+        "url": "https://www.aljazeera.com/xml/rss/all.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Le Monde sciences",
+        "url": "https://www.lemonde.fr/sciences/rss_full.xml",
+        "kind": "feed",
+        "language": "fr",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Frankfurter Allgemeine Wissen",
+        "url": "https://www.faz.net/rss/aktuell/wissen/",
+        "kind": "feed",
+        "language": "de",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Der Spiegel Weltall",
+        "url": "https://www.spiegel.de/wissenschaft/weltall/index.rss",
+        "kind": "feed",
+        "language": "de",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "ANSA top news",
+        "url": "https://www.ansa.it/sito/notizie/topnews/topnews_rss.xml",
+        "kind": "feed",
+        "language": "it",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "El País ciencia",
+        "url": "https://www.elpais.com/rss/elpais/ciencia.xml",
+        "kind": "feed",
+        "language": "es",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Xinhua English world",
+        "url": "http://www.xinhuanet.com/english/rss/worldrss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true,
+        "note": "State outlet. Label it as such."
+      },
+      {
+        "name": "CGTN world",
+        "url": "https://www.cgtn.com/subscribe/rss/section/world.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true,
+        "note": "State outlet. Label it as such."
+      },
+      {
+        "name": "South China Morning Post",
+        "url": "https://www.scmp.com/rss/91/feed",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "NHK news",
+        "url": "https://www3.nhk.or.jp/rss/news/cat0.xml",
+        "kind": "feed",
+        "language": "ja",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Asahi headlines",
+        "url": "https://www.asahi.com/rss/asahi/newsheadlines.rdf",
+        "kind": "feed",
+        "language": "ja",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "The Japan Times",
+        "url": "https://www.japantimes.co.jp/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "TASS English",
+        "url": "https://tass.com/rss/v2.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true,
+        "note": "State outlet. Label it as such."
+      },
+      {
+        "name": "RIA Novosti",
+        "url": "https://ria.ru/export/rss2/index.xml",
+        "kind": "feed",
+        "language": "ru",
+        "role": "national_press",
+        "reachable": true,
+        "note": "State outlet. Label it as such."
+      },
+      {
+        "name": "Kommersant",
+        "url": "https://www.kommersant.ru/RSS/news.xml",
+        "kind": "feed",
+        "language": "ru",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Hindustan Times science",
+        "url": "https://www.hindustantimes.com/feeds/rss/science/rssfeed.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "The Hindu science",
+        "url": "https://www.thehindu.com/sci-tech/science/feeder/default.rss",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Yonhap English",
+        "url": "https://en.yna.co.kr/RSS/news.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Korea Times",
+        "url": "https://www.koreatimes.co.kr/www/rss/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "ABC News Australia",
+        "url": "https://www.abc.net.au/news/feed/51120/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "CBC top stories",
+        "url": "https://www.cbc.ca/cmlink/rss-topstories",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Agência Brasil",
+        "url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
+        "kind": "feed",
+        "language": "pt",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Anadolu Agency world",
+        "url": "https://www.aa.com.tr/en/rss/default?cat=world",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true,
+        "note": "Turkish state outlet. Label it as such."
+      },
+      {
+        "name": "Arab News",
+        "url": "https://www.arabnews.com/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true
+      },
+      {
+        "name": "Ukrinform",
+        "url": "https://www.ukrinform.net/rss/block-lastnews",
+        "kind": "feed",
+        "language": "en",
+        "role": "national_press",
+        "reachable": true,
+        "note": "Ukrainian state news agency. Label it as such."
+      }
+    ],
+    "business": [
+      {
+        "name": "Bloomberg markets",
+        "url": "https://feeds.bloomberg.com/markets/news.rss",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "Financial Times",
+        "url": "https://www.ft.com/rss/home",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "The Economist science and technology",
+        "url": "https://www.economist.com/science-and-technology/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "New York Post",
+        "url": "https://nypost.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "New York Post tech",
+        "url": "https://nypost.com/tech/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "Aviation Week",
+        "url": "https://aviationweek.com/rss.xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "FlightGlobal",
+        "url": "https://www.flightglobal.com/rss",
+        "kind": "feed",
+        "language": "en",
+        "role": "business",
+        "reachable": true
+      },
+      {
+        "name": "Defense News",
+        "url": "https://www.defensenews.com/arc/outboundfeeds/rss/?outputType=xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "defence",
+        "reachable": true
+      },
+      {
+        "name": "Breaking Defense",
+        "url": "https://breakingdefense.com/feed/",
+        "kind": "feed",
+        "language": "en",
+        "role": "defence",
+        "reachable": true
+      },
+      {
+        "name": "C4ISRNET",
+        "url": "https://www.c4isrnet.com/arc/outboundfeeds/rss/?outputType=xml",
+        "kind": "feed",
+        "language": "en",
+        "role": "defence",
+        "reachable": true
+      }
+    ]
+  },
+  "companies": [
+    {
+      "name": "SpaceX updates",
+      "url": "https://www.spacex.com/updates",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Blue Origin news",
+      "url": "https://www.blueorigin.com/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": false,
+      "note": "The page exists. It rate-limited this check."
+    },
+    {
+      "name": "Axiom Space news",
+      "url": "https://www.axiomspace.com/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Vast updates",
+      "url": "https://www.vastspace.com/updates",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Voyager Technologies news",
+      "url": "https://voyagertechnologies.com/news/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Voyager Space news",
+      "url": "https://voyagerspace.com/news/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Virgin Galactic news",
+      "url": "https://www.virgingalactic.com/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Rocket Lab updates",
+      "url": "https://www.rocketlabusa.com/updates/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Firefly news",
+      "url": "https://www.fireflyspace.com/news/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Relativity Space press",
+      "url": "https://www.relativityspace.com/press",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Sierra Space news",
+      "url": "https://www.sierraspace.com/news/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Planet Pulse",
+      "url": "https://www.planet.com/pulse/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "ICEYE press",
+      "url": "https://www.iceye.com/press",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Viasat newsroom",
+      "url": "https://www.viasat.com/about/newsroom/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Lockheed Martin news",
+      "url": "https://www.lockheedmartin.com/en-us/news.html",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Boeing space",
+      "url": "https://www.boeing.com/space",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Airbus newsroom",
+      "url": "https://www.airbus.com/en/newsroom",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "OHB news",
+      "url": "https://www.ohb.de/en/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Thales Alenia Space news",
+      "url": "https://www.thalesaleniaspace.com/en/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "ArianeGroup",
+      "url": "https://www.ariane.group/en/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Arianespace",
+      "url": "https://www.arianespace.com/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Avio",
+      "url": "https://www.avio.com/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Isar Aerospace",
+      "url": "https://www.isaraerospace.com/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Rocket Factory Augsburg press",
+      "url": "https://www.rfa.space/press",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "PLD Space news",
+      "url": "https://www.pldspace.com/en/news",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "Eutelsat",
+      "url": "https://www.eutelsat.com/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    },
+    {
+      "name": "SES",
+      "url": "https://www.ses.com/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "company",
+      "reachable": true
+    }
+  ],
+  "major_embassies_in_washington": [
+    {
+      "name": "British Embassy Washington",
+      "url": "https://www.gov.uk/world/organisations/british-embassy-washington",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of France in the United States",
+      "url": "https://franceintheus.org/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "German missions in the United States",
+      "url": "https://www.germany.info/us-en",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of Italy in Washington",
+      "url": "https://ambwashingtondc.esteri.it/en/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of Poland in Washington",
+      "url": "https://www.gov.pl/web/usa-en",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of India in Washington",
+      "url": "https://www.indianembassyusa.gov.in/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of China in the United States",
+      "url": "https://us.china-embassy.gov.cn/eng/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of Sweden in Washington",
+      "url": "https://www.swedenabroad.se/en/embassies/usa-washington/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of Norway in Washington",
+      "url": "https://www.norway.no/en/usa/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    },
+    {
+      "name": "Embassy of the UAE in Washington",
+      "url": "https://www.uae-embassy.org/",
+      "kind": "newsroom",
+      "language": "en",
+      "role": "embassy_in_washington",
+      "reachable": true
+    }
+  ],
+  "desks": {
+    "americas": {
+      "name": "Americas",
+      "countries": [
+        {
+          "iso3": "USA",
+          "name": "United States",
+          "sources": [
+            {
+              "name": "NASA news releases",
+              "url": "https://www.nasa.gov/news-release/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "NASA all content",
+              "url": "https://www.nasa.gov/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "NASA Artemis",
+              "url": "https://www.nasa.gov/missions/artemis/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Space Force",
+              "url": "https://www.spaceforce.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=1060&max=20",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Department of Defense",
+              "url": "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=945&max=20",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Department of State",
+              "url": "https://www.state.gov/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "White House news",
+              "url": "https://www.whitehouse.gov/news/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Federal Register",
+              "url": "https://www.federalregister.gov/api/v1/documents.rss",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "CAN",
+          "name": "Canada",
+          "sources": [
+            {
+              "name": "Canadian Space Agency news",
+              "url": "https://www.asc-csa.gc.ca/eng/news/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "CBC",
+              "url": "https://www.cbc.ca/cmlink/rss-topstories",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Ottawa",
+              "url": "https://ca.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "BRA",
+          "name": "Brazil",
+          "sources": [
+            {
+              "name": "Brazilian Space Agency",
+              "url": "https://www.gov.br/aeb/pt-br",
+              "kind": "newsroom",
+              "language": "pt",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Agência Brasil",
+              "url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
+              "kind": "feed",
+              "language": "pt",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Brasília",
+              "url": "https://br.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "esa_eu": {
+      "name": "ESA and EU",
+      "countries": [
+        {
+          "iso3": "ESA",
+          "name": "European Space Agency",
+          "sources": [
+            {
+              "name": "ESA top news",
+              "url": "https://www.esa.int/rssfeed/TopNews",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA space news",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Space_News",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA human spaceflight",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Human_Spaceflight",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA launchers",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Launchers",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA Earth observation",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Observing_the_Earth",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA navigation",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Navigation",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA science",
+              "url": "https://www.esa.int/rssfeed/Our_Activities/Space_Science",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "EEAS press",
+              "url": "https://www.eeas.europa.eu/eeas/press-material_en",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "UNOOSA media",
+              "url": "https://www.unoosa.org/oosa/en/informationfor/media.html",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "west": {
+      "name": "Western and Southern Europe",
+      "countries": [
+        {
+          "iso3": "GBR",
+          "name": "United Kingdom",
+          "sources": [
+            {
+              "name": "UK Space Agency",
+              "url": "https://www.gov.uk/government/organisations/uk-space-agency.atom",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "UK Ministry of Defence",
+              "url": "https://www.gov.uk/government/organisations/ministry-of-defence.atom",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "BBC science and environment",
+              "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "ESA United Kingdom feed",
+              "url": "https://www.esa.int/rssfeed/UnitedKingdom",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "British Embassy Washington",
+              "url": "https://www.gov.uk/world/organisations/british-embassy-washington",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy London",
+              "url": "https://uk.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "FRA",
+          "name": "France",
+          "sources": [
+            {
+              "name": "CNES news",
+              "url": "https://cnes.fr/en/news",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "French Ministry of the Armed Forces",
+              "url": "https://www.defense.gouv.fr/",
+              "kind": "newsroom",
+              "language": "fr",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Le Monde sciences",
+              "url": "https://www.lemonde.fr/sciences/rss_full.xml",
+              "kind": "feed",
+              "language": "fr",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "ESA France feed",
+              "url": "https://www.esa.int/rssfeed/France",
+              "kind": "feed",
+              "language": "fr",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of France in the United States",
+              "url": "https://franceintheus.org/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Paris",
+              "url": "https://fr.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "DEU",
+          "name": "Germany",
+          "sources": [
+            {
+              "name": "DLR news",
+              "url": "https://www.dlr.de/en/latest/news",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "German Ministry of Defence",
+              "url": "https://www.bmvg.de/en",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Frankfurter Allgemeine Wissen",
+              "url": "https://www.faz.net/rss/aktuell/wissen/",
+              "kind": "feed",
+              "language": "de",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Der Spiegel Weltall",
+              "url": "https://www.spiegel.de/wissenschaft/weltall/index.rss",
+              "kind": "feed",
+              "language": "de",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "ESA Germany feed",
+              "url": "https://www.esa.int/rssfeed/Germany",
+              "kind": "feed",
+              "language": "de",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "German missions in the United States",
+              "url": "https://www.germany.info/us-en",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Berlin",
+              "url": "https://de.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ITA",
+          "name": "Italy",
+          "sources": [
+            {
+              "name": "Italian Space Agency",
+              "url": "https://www.asi.it/en/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ANSA",
+              "url": "https://www.ansa.it/sito/notizie/topnews/topnews_rss.xml",
+              "kind": "feed",
+              "language": "it",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "ESA Italy feed",
+              "url": "https://www.esa.int/rssfeed/Italy",
+              "kind": "feed",
+              "language": "it",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of Italy in Washington",
+              "url": "https://ambwashingtondc.esteri.it/en/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Rome",
+              "url": "https://it.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ESP",
+          "name": "Spain",
+          "sources": [
+            {
+              "name": "El País ciencia",
+              "url": "https://www.elpais.com/rss/elpais/ciencia.xml",
+              "kind": "feed",
+              "language": "es",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "ESA Spain feed",
+              "url": "https://www.esa.int/rssfeed/Spain",
+              "kind": "feed",
+              "language": "es",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Madrid",
+              "url": "https://es.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "NLD",
+          "name": "Netherlands",
+          "sources": [
+            {
+              "name": "ESA Netherlands feed",
+              "url": "https://www.esa.int/rssfeed/Netherlands",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy The Hague",
+              "url": "https://nl.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "cee": {
+      "name": "Central and Eastern Europe",
+      "countries": [
+        {
+          "iso3": "POL",
+          "name": "Poland",
+          "sources": [
+            {
+              "name": "Polish Space Agency",
+              "url": "https://www.polsa.gov.pl/feed/",
+              "kind": "feed",
+              "language": "pl",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "ESA Poland feed",
+              "url": "https://www.esa.int/rssfeed/Poland",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of Poland in Washington",
+              "url": "https://www.gov.pl/web/usa-en",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Warsaw",
+              "url": "https://pl.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "CZE",
+          "name": "Czechia",
+          "sources": [
+            {
+              "name": "ESA Czechia feed",
+              "url": "https://www.esa.int/rssfeed/Czech",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Prague",
+              "url": "https://cz.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "HUN",
+          "name": "Hungary",
+          "sources": [
+            {
+              "name": "ESA Hungary feed",
+              "url": "https://www.esa.int/rssfeed/Hungary",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Budapest",
+              "url": "https://hu.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ROU",
+          "name": "Romania",
+          "sources": [
+            {
+              "name": "ESA Romania feed",
+              "url": "https://www.esa.int/rssfeed/Romania",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Bucharest",
+              "url": "https://ro.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "UKR",
+          "name": "Ukraine",
+          "sources": [
+            {
+              "name": "Ukrinform",
+              "url": "https://www.ukrinform.net/rss/block-lastnews",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State news agency. Label it as such."
+            },
+            {
+              "name": "US Embassy Kyiv",
+              "url": "https://ua.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "nordics": {
+      "name": "Nordics",
+      "countries": [
+        {
+          "iso3": "SWE",
+          "name": "Sweden",
+          "sources": [
+            {
+              "name": "ESA Sweden feed",
+              "url": "https://www.esa.int/rssfeed/Sweden",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of Sweden in Washington",
+              "url": "https://www.swedenabroad.se/en/embassies/usa-washington/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Stockholm",
+              "url": "https://se.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "NOR",
+          "name": "Norway",
+          "sources": [
+            {
+              "name": "ESA Norway feed",
+              "url": "https://www.esa.int/rssfeed/Norway",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of Norway in Washington",
+              "url": "https://www.norway.no/en/usa/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Oslo",
+              "url": "https://no.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "FIN",
+          "name": "Finland",
+          "sources": [
+            {
+              "name": "ESA Finland feed",
+              "url": "https://www.esa.int/rssfeed/Finland",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Helsinki",
+              "url": "https://fi.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "DNK",
+          "name": "Denmark",
+          "sources": [
+            {
+              "name": "ESA Denmark feed",
+              "url": "https://www.esa.int/rssfeed/Denmark",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "eurasia": {
+      "name": "Eurasia and Central Asia",
+      "countries": [
+        {
+          "iso3": "RUS",
+          "name": "Russia",
+          "sources": [
+            {
+              "name": "Roscosmos",
+              "url": "https://www.roscosmos.ru/",
+              "kind": "newsroom",
+              "language": "ru",
+              "role": "government",
+              "reachable": false,
+              "note": "The site refused an automated read."
+            },
+            {
+              "name": "TASS",
+              "url": "https://tass.com/rss/v2.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State outlet. Label it as such."
+            },
+            {
+              "name": "RIA Novosti",
+              "url": "https://ria.ru/export/rss2/index.xml",
+              "kind": "feed",
+              "language": "ru",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State outlet. Label it as such."
+            },
+            {
+              "name": "Kommersant",
+              "url": "https://www.kommersant.ru/RSS/news.xml",
+              "kind": "feed",
+              "language": "ru",
+              "role": "national_press",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "mena": {
+      "name": "Türkiye, Middle East and Africa",
+      "countries": [
+        {
+          "iso3": "TUR",
+          "name": "Türkiye",
+          "sources": [
+            {
+              "name": "Turkish Space Agency",
+              "url": "https://tua.gov.tr/en",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Turkish Space Agency, Turkish",
+              "url": "https://tua.gov.tr/",
+              "kind": "newsroom",
+              "language": "tr",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Anadolu Agency",
+              "url": "https://www.aa.com.tr/en/rss/default?cat=world",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State outlet. Label it as such."
+            },
+            {
+              "name": "US Embassy Ankara",
+              "url": "https://tr.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ARE",
+          "name": "United Arab Emirates",
+          "sources": [
+            {
+              "name": "WAM",
+              "url": "https://www.wam.ae/en/rss",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true,
+              "note": "The address answers with a page, not an RSS file. State outlet."
+            },
+            {
+              "name": "Embassy of the UAE in Washington",
+              "url": "https://www.uae-embassy.org/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Abu Dhabi",
+              "url": "https://ae.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "SAU",
+          "name": "Saudi Arabia",
+          "sources": [
+            {
+              "name": "Arab News",
+              "url": "https://www.arabnews.com/rss.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Riyadh",
+              "url": "https://sa.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ISR",
+          "name": "Israel",
+          "sources": [
+            {
+              "name": "US Embassy Jerusalem",
+              "url": "https://il.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "EGY",
+          "name": "Egypt",
+          "sources": [
+            {
+              "name": "US Embassy Cairo",
+              "url": "https://eg.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "ZAF",
+          "name": "South Africa",
+          "sources": [
+            {
+              "name": "SANSA",
+              "url": "https://www.sansa.org.za/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "SANSA news",
+              "url": "https://www.sansa.org.za/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    },
+    "asia_pac": {
+      "name": "Asia Pacific",
+      "countries": [
+        {
+          "iso3": "CHN",
+          "name": "China",
+          "sources": [
+            {
+              "name": "CNSA",
+              "url": "https://www.cnsa.gov.cn/",
+              "kind": "newsroom",
+              "language": "zh",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "Xinhua English world",
+              "url": "http://www.xinhuanet.com/english/rss/worldrss.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State outlet. Label it as such."
+            },
+            {
+              "name": "CGTN world",
+              "url": "https://www.cgtn.com/subscribe/rss/section/world.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true,
+              "note": "State outlet. Label it as such."
+            },
+            {
+              "name": "South China Morning Post",
+              "url": "https://www.scmp.com/rss/91/feed",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of China in the United States",
+              "url": "https://us.china-embassy.gov.cn/eng/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "JPN",
+          "name": "Japan",
+          "sources": [
+            {
+              "name": "JAXA press",
+              "url": "https://global.jaxa.jp/rss/press.rdf",
+              "kind": "feed",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "NHK",
+              "url": "https://www3.nhk.or.jp/rss/news/cat0.xml",
+              "kind": "feed",
+              "language": "ja",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Asahi",
+              "url": "https://www.asahi.com/rss/asahi/newsheadlines.rdf",
+              "kind": "feed",
+              "language": "ja",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "The Japan Times",
+              "url": "https://www.japantimes.co.jp/feed/",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of Japan news",
+              "url": "https://www.us.emb-japan.go.jp/itpr_en/news.html",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": false,
+              "note": "The news page refused an automated read."
+            },
+            {
+              "name": "US Embassy Tokyo",
+              "url": "https://jp.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "IND",
+          "name": "India",
+          "sources": [
+            {
+              "name": "ISRO",
+              "url": "https://www.isro.gov.in/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": true
+            },
+            {
+              "name": "The Hindu science",
+              "url": "https://www.thehindu.com/sci-tech/science/feeder/default.rss",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Hindustan Times science",
+              "url": "https://www.hindustantimes.com/feeds/rss/science/rssfeed.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Embassy of India in Washington",
+              "url": "https://www.indianembassyusa.gov.in/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "embassy_in_washington",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy New Delhi",
+              "url": "https://in.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "KOR",
+          "name": "South Korea",
+          "sources": [
+            {
+              "name": "Yonhap",
+              "url": "https://en.yna.co.kr/RSS/news.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Korea Times",
+              "url": "https://www.koreatimes.co.kr/www/rss/rss.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "US Embassy Seoul",
+              "url": "https://kr.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        },
+        {
+          "iso3": "AUS",
+          "name": "Australia",
+          "sources": [
+            {
+              "name": "ABC News",
+              "url": "https://www.abc.net.au/news/feed/51120/rss.xml",
+              "kind": "feed",
+              "language": "en",
+              "role": "national_press",
+              "reachable": true
+            },
+            {
+              "name": "Australian Space Agency news",
+              "url": "https://www.space.gov.au/news",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "government",
+              "reachable": false,
+              "note": "The page timed out on this check."
+            },
+            {
+              "name": "US Embassy Canberra",
+              "url": "https://au.usembassy.gov/",
+              "kind": "newsroom",
+              "language": "en",
+              "role": "us_embassy",
+              "reachable": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "source_count": 200
+}
