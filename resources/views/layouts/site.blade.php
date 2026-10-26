@@ -103,6 +103,7 @@ footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:
 .cookie{position:relative;z-index:5;width:auto;background:var(--panel);border-bottom:1px solid var(--line-2);padding:14px 0;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px}
 .cookie p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.5}
 .cookie .btn{flex:none;min-height:44px}
+body.sq,body.sq *,body.sq *::before,body.sq *::after{border-radius:0!important}
 @media (max-width:1100px){.wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}}
 @media (max-width:720px){
   .brand span{display:none}
@@ -124,7 +125,7 @@ footer.foot a{color:var(--ink-2);text-decoration:none}footer.foot a:hover{color:
 </style>
 @stack('head')
 </head>
-<body>
+<body @if(request()->is('admin*')) class="sq" @endif>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="/" aria-label="Sovereign Space ATLAS, open the atlas">

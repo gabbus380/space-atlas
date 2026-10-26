@@ -77,7 +77,11 @@ class SocialLoginTest extends TestCase
     {
         $admin = User::factory()->create();
         $admin->forceFill(['is_admin' => true, 'staff_role' => Staff::ADMIN])->save();
-        $this->actingAs($admin)->get('/admin/sign-in')->assertOk()->assertSee('Redirect URL')->assertSee('/login/google/callback', false);
+        $this->actingAs($admin)->get('/admin/sign-in')->assertOk()
+            ->assertSee('What each value is')
+            ->assertSee('Services ID')
+            ->assertSee('.apps.googleusercontent.com', false)
+            ->assertSee('/login/google/callback', false);
         $this->post('/admin/sign-in', [
             'providers' => [
                 'google' => ['client_id' => 'google-client-id', 'client_secret' => 'google-secret-value'],

@@ -3,9 +3,9 @@
 @section('noindex', '1')
 @section('style')
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:24px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.kpi{background:var(--panel);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:8px}
 .kpi b{font-family:var(--serif);font-weight:400;font-size:44px;line-height:1}
-.bar{height:6px;background:var(--raise);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold)}
+.bar{height:6px;background:var(--raise);overflow:hidden}.bar i{display:block;height:100%;background:var(--gold)}
 .forms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
 .forms .form{max-width:none}
 @media (max-width:980px){.kpis,.forms{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
