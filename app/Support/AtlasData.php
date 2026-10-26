@@ -51,7 +51,7 @@ class AtlasData
 
     /**
      * The one full edition guests and free accounts can read and play.
-     * It is the earliest briefing filed in the current UTC month, so it stays put until next month.
+     * It is the latest briefing filed in the current UTC month.
      * If this month has none yet, the newest edition on file is used.
      */
     public function demoBriefing(): ?array
@@ -62,12 +62,13 @@ class AtlasData
         }
         $month = now('UTC')->format('Y-m');
         $inMonth = array_values(array_filter($briefs, fn ($b) => str_starts_with((string) ($b['date'] ?? ''), $month)));
-        if ($inMonth !== []) {
-            usort($inMonth, fn ($a, $b) => strcmp((string) ($a['date'] ?? ''), (string) ($b['date'] ?? '')));
-            $pick = $inMonth[0];
-        } else {
-            $pick = $briefs[0];
-        }
+        $pool = $inMonth !== [] ? $inMonth : $briefs;
+        usort($pool, function ($a, $b) {
+            $byDate = strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? ''));
+
+            return $byDate !== 0 ? $byDate : strcmp((string) ($b['generated_at'] ?? ''), (string) ($a['generated_at'] ?? ''));
+        });
+        $pick = $pool[0];
         $pick['demo'] = true;
 
         return $pick;
