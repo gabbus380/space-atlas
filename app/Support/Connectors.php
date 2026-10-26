@@ -61,6 +61,36 @@ class Connectors
         }
 
         self::applySignIn();
+        self::applyAi();
+    }
+
+    /** The saved AI connector, or the Anthropic key set on the server. */
+    public static function applyAi(): void
+    {
+        $key = Setting::get('ai.api_key');
+        if (! filled($key)) {
+            $key = config('services.anthropic.key');
+            if (filled($key)) {
+                Setting::put('ai.api_key', $key);
+                if (! filled(Setting::get('ai.provider'))) {
+                    Setting::put('ai.provider', 'anthropic');
+                }
+            }
+        }
+        if (filled($key)) {
+            Config::set('services.anthropic.key', $key);
+        }
+        foreach ([
+            'ai.provider' => 'provider',
+            'ai.model' => 'model',
+            'ai.base_url' => 'url',
+            'ai.workspace' => 'workspace',
+        ] as $setting => $name) {
+            $value = Setting::get($setting);
+            if (filled($value)) {
+                Config::set('services.anthropic.'.$name, $value);
+            }
+        }
     }
 
     /** Fields an admin pastes for each sign-in provider. Secret fields stay blank to keep the saved value. */
