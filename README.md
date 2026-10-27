@@ -36,7 +36,7 @@ The data is filtered on the server (`app/Support/AtlasData.php`, `app/Support/Pl
 
 ### Country-file import
 
-Run `php tools/update_country_files.php /path/to/database.json` from the application root. The importer accepts schema 2 with exactly 235 map countries, 62 `verified` files and 173 `partial` files. It publishes only `database.files`; evidence, flags, rejected URLs, research drafts and review-required extensions remain outside the website. The command updates both data payloads, both embedded editions, public counts and metadata, and validates every output before writing.
+Run `php tools/update_country_files.php /path/to/database.json` from the application root. The importer accepts schema 2 with exactly 235 map countries, 62 `verified` files and 173 `partial` files. It publishes `database.files` plus media extensions that passed the canonical evidence gate and are explicitly marked `accepted`; evidence, flags, rejected URLs, research drafts, proposed core changes and review-required extensions remain outside the website. The command updates both data payloads, both embedded editions, public counts and metadata, and validates every output before writing.
 
 ## 1. Paddle
 

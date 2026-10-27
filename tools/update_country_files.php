@@ -37,7 +37,7 @@ try {
         $htmlPaths,
     );
 
-    $files = validateImport($database, $atlas);
+    $files = applyAcceptedMedia(validateImport($database, $atlas), $database);
     $counts['cfiles'] = count($files);
     $atlas['cfiles'] = $files;
     $live['collections']['country'] = $files;
@@ -179,6 +179,37 @@ function validateMedia(string $iso3, mixed $media): void
             }
         }
     }
+}
+
+/**
+ * Publish only explicitly accepted additive media. Evidence and workflow fields
+ * remain in the research database and never enter the application payload.
+ *
+ * @param  array<string, array<string, mixed>>  $files
+ * @param  array<string, mixed>  $database
+ * @return array<string, array<string, mixed>>
+ */
+function applyAcceptedMedia(array $files, array $database): array
+{
+    foreach ($database['extensions'] ?? [] as $iso3 => $extension) {
+        if (! is_array($extension) || ($extension['status'] ?? null) !== 'accepted') {
+            continue;
+        }
+        if (! isset($files[$iso3]) || ($files[$iso3]['verify'] ?? null) !== 'verified') {
+            throw new RuntimeException("Accepted media extension $iso3 has no verified public core.");
+        }
+        $media = $extension['media'] ?? null;
+        validateMedia($iso3, $media);
+        foreach ($media['outlets'] as $outlet) {
+            $id = $outlet['id'] ?? null;
+            if (! is_string($id) || ! is_array($database['evidence'][$iso3]['media'][$id] ?? null)) {
+                throw new RuntimeException("Accepted media extension $iso3 has an outlet without separate evidence.");
+            }
+        }
+        $files[$iso3]['media'] = $media;
+    }
+
+    return $files;
 }
 
 function isWebUrl(string $url): bool
