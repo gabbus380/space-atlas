@@ -107,7 +107,9 @@ class AtlasAccessTest extends TestCase
         );
         $this->assertSame(62, collect($files)->where('verify', 'verified')->count());
         $this->assertSame(173, collect($files)->where('verify', 'partial')->count());
-        $this->assertSame(173, collect($files)->filter(fn ($file) => isset($file['media']))->count());
+        $this->assertSame(229, collect($files)->filter(fn ($file) => isset($file['media']))->count());
+        $this->assertNotEmpty($files['HUN']['media']['outlets']);
+        $this->assertArrayNotHasKey('media', $files['GBR']);
 
         foreach ($files as $iso3 => $file) {
             $this->assertSame($iso3, $file['iso3']);
