@@ -93,6 +93,52 @@ class AtlasAccessTest extends TestCase
         $this->assertSame('guest', $j['ent']['tier']);
     }
 
+    public function test_worldwide_country_files_are_complete_and_honestly_labelled(): void
+    {
+        $atlas = app(AtlasData::class)->atlas();
+        $files = $atlas['cfiles'];
+        $liveFiles = app(AtlasData::class)->live()['collections']['country'];
+
+        $this->assertCount(235, $files);
+        $this->assertSame(array_keys($files), array_keys($liveFiles));
+        $this->assertSame(
+            collect($atlas['countries'])->pluck('iso3')->sort()->values()->all(),
+            collect(array_keys($files))->sort()->values()->all(),
+        );
+        $this->assertSame(62, collect($files)->where('verify', 'verified')->count());
+        $this->assertSame(173, collect($files)->where('verify', 'partial')->count());
+        $this->assertSame(173, collect($files)->filter(fn ($file) => isset($file['media']))->count());
+
+        foreach ($files as $iso3 => $file) {
+            $this->assertSame($iso3, $file['iso3']);
+            $this->assertContains($file['verify'], ['verified', 'partial']);
+        }
+    }
+
+    public function test_open_edition_has_all_country_stubs_without_full_or_media_data(): void
+    {
+        $atlas = $this->embeddedAtlas($this->get('/')->getContent());
+
+        $this->assertCount(235, $atlas['cfiles']);
+        foreach ($atlas['cfiles'] as $file) {
+            $this->assertTrue($file['locked']);
+            $this->assertArrayNotHasKey('stakeholders', $file);
+            $this->assertArrayNotHasKey('media', $file);
+        }
+    }
+
+    public function test_paid_edition_includes_published_local_media(): void
+    {
+        $this->actingAs($this->personal());
+        $response = $this->get('/');
+        $response->assertOk()->assertSee('Local media');
+        $atlas = $this->embeddedAtlas($response->getContent());
+
+        $this->assertCount(235, $atlas['cfiles']);
+        $this->assertNotEmpty($atlas['cfiles']['AFG']['media']['outlets']);
+        $this->assertArrayHasKey('stakeholders', $atlas['cfiles']['AFG']);
+    }
+
     public function test_free_account_opens_three_files_a_month(): void
     {
         $u = User::factory()->create();

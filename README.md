@@ -30,8 +30,13 @@ The data is filtered on the server (`app/Support/AtlasData.php`, `app/Support/Pl
 | `routes/atlas.php` | `/`, `/app/live`, `/app/audio`: no session unless the reader is signed in |
 | `routes/web.php` | Accounts, billing, team, admin |
 | `routes/api.php` | `/v1/countries`, `/v1/countries/{iso3}/file`, `/v1/programs`, `/v1/organizations`, `/v1/engagements`, `/v1/briefings`, `/v1/events` |
+| `tools/update_country_files.php` | Safely imports the 235-file public projection from the country research database |
 | `tools/update_live.py` | Rebuilds `live.json` and the audio folder from an export of the ATLAS database, with a leak scan |
 | `tests/Feature/` | 29 tests: plan filtering, free allowance, watchlist, team notes, seats, invitations, withdrawal, API, admin |
+
+### Country-file import
+
+Run `php tools/update_country_files.php /path/to/database.json` from the application root. The importer accepts schema 2 with exactly 235 map countries, 62 `verified` files and 173 `partial` files. It publishes only `database.files`; evidence, flags, rejected URLs, research drafts and review-required extensions remain outside the website. The command updates both data payloads, both embedded editions, public counts and metadata, and validates every output before writing.
 
 ## 1. Paddle
 
