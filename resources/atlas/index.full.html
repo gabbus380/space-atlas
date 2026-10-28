@@ -664,6 +664,14 @@ table.cmp td.hot{color:var(--ink);font-weight:600}
 .cmp-metric{display:grid;grid-template-columns:minmax(108px,.8fr) 1.4fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
 .cmp-metric span{color:var(--ink-3);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
 .cmp-metric b{font-weight:450;overflow-wrap:anywhere}
+.cmp-verdict{grid-column:1 / -1;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--space)}
+.cmp-verdict h3{margin:0;font-size:22px;font-weight:400}
+.cmp-col.lead{box-shadow:inset 0 3px 0 var(--orange)}
+.cmp-metric.win b{color:var(--orange)}
+.cmp-metric .leadtag{display:inline-block;margin-left:8px;color:var(--orange);font-size:10px;letter-spacing:.08em}
+.cf-atlas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:0 0 22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.cf-atlas p{margin:6px 0 0;font-size:13px}
+@media (max-width:900px){ .cf-atlas{grid-template-columns:1fr} }
 .cmp-data{display:none}
 .org-prog{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;padding:8px 0;cursor:pointer}
 .org-prog b{display:block;font-weight:500}
@@ -1657,7 +1665,9 @@ body,body *{border-radius:0!important}
     <section class="view" id="v-compare" aria-label="Compare countries">
       <div class="cmp-bar">
         <div><span class="eyebrow">Two countries</span><h2>Compare</h2></div>
-        <span class="muted" style="font-size:12px">Choose one country on each side. The full table stays in the page for export.</span>
+        <label class="muted" for="cmpMetric" style="font-size:12px">Measure</label>
+        <select id="cmpMetric" aria-label="Measure used to decide which country leads"></select>
+        <span class="muted" style="font-size:12px">The country with the stronger selected figure is marked. The full table stays in the page for export.</span>
         <button class="pill" id="csvBtn" type="button" style="margin-left:auto" hidden>Export CSV</button>
       </div>
       <div class="cmp-stage scroll" id="cmpStage"></div>
@@ -2760,10 +2770,23 @@ function renderCompareTable(list){
   table.innerHTML = `<thead><tr><th scope="col">ISO3</th>${COLS.map(col => `<th scope="col">${esc(col.l)}</th>`).join("")}</tr></thead><tbody>${list.map(c => `<tr data-iso="${c.iso3}"><td>${esc(c.iso3)}</td>${COLS.map(col => `<td>${esc(compareCell(col, c))}</td>`).join("")}</tr>`).join("")}</tbody>`;
   window.ATLAS_COMPARE = list.map(c => { const row = { iso3:c.iso3 }; COLS.forEach(col => { const v = col.get(c); row[col.k] = v == null ? null : v; }); return row; });
 }
-function compareColumn(c){
-  return `<article class="cmp-col"><div class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><input class="cmp-q" type="search" placeholder="Choose a country" value="" aria-label="Choose a country to compare" autocomplete="off" data-side="${c.iso3}"><div class="sugg cmp-sugg" hidden></div></div>
-    <h3>${flag(c.iso3, "lg")}<span>${esc(c.name)}</span></h3><span class="muted" style="font-size:12px">${esc(c.iso3)}${c.agency && c.agency.name ? " · " + esc(c.agency.abbr || c.agency.name) : ""}</span>
-    <div class="cmp-metrics">${COLS.filter(col => col.k !== "name").map(col => `<div class="cmp-metric"><span>${esc(col.l)}</span><b>${esc(compareCell(col, c))}</b></div>`).join("")}</div></article>`;
+function compareMetricKey(id){ return id === "elec_next" ? "elnext" : id === "elec_cycle" ? "elcyc" : id; }
+function compareVerdict(a, b){
+  const metric = MBY[state.metric] || MBY.space_usd;
+  const va = metric.get(a), vb = metric.get(b);
+  if (va == null && vb == null) return { metric, winner:null, text:"Neither country has a public figure for this measure." };
+  if (va == null || vb == null){ const winner = va == null ? b : a; return { metric, winner, text:winner.name + " is the only one with a public figure." }; }
+  if (va === vb) return { metric, winner:null, tie:true, text:"The two figures are equal." };
+  const winner = va > vb ? a : b;
+  const sense = metric.id === "elec_next" ? "has the nearer national election" : metric.id === "elec_cycle" ? "is further through the current term" : "leads";
+  return { metric, winner, text:winner.name + " " + sense + " on " + metric.label + "." };
+}
+function compareColumn(c, verdict){
+  const key = compareMetricKey(verdict.metric.id);
+  const leads = verdict.winner && verdict.winner.iso3 === c.iso3;
+  return `<article class="cmp-col${leads ? " lead" : ""}"><div class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><input class="cmp-q" type="search" placeholder="Choose a country" value="" aria-label="Choose a country to compare" autocomplete="off" data-side="${c.iso3}"><div class="sugg cmp-sugg" hidden></div></div>
+    <h3>${flag(c.iso3, "lg")}<span>${esc(c.name)}</span></h3><span class="muted" style="font-size:12px">${esc(c.iso3)}${leads ? " · leads on the selected measure" : ""}${c.agency && c.agency.name ? " · " + esc(c.agency.abbr || c.agency.name) : ""}</span>
+    <div class="cmp-metrics">${COLS.filter(col => col.k !== "name").map(col => `<div class="cmp-metric${leads && col.k === key ? " win" : ""}"><span>${esc(col.l)}</span><b>${esc(compareCell(col, c))}${leads && col.k === key ? `<span class="leadtag">Leads</span>` : ""}</b></div>`).join("")}</div></article>`;
 }
 function renderCompare(){
   if (window.ATLAS_LOCK && window.ATLAS_LOCK.locked("compare")) return;
@@ -2772,8 +2795,13 @@ function renderCompare(){
   if (!C[state.cmpB] || state.cmpB === state.cmpA) state.cmpB = (all.find(c => c.iso3 !== state.cmpA && c.core) || all.find(c => c.iso3 !== state.cmpA) || {}).iso3;
   renderCompareTable(all);
   const stage = $("#cmpStage"); if (!stage || !C[state.cmpA] || !C[state.cmpB]) return;
-  stage.innerHTML = compareColumn(C[state.cmpA]) + compareColumn(C[state.cmpB]);
+  const a = C[state.cmpA], b = C[state.cmpB], verdict = compareVerdict(a, b);
+  const picker = $("#cmpMetric");
+  if (picker && !picker.options.length) picker.innerHTML = METRICS.map(m => `<option value="${m.id}">${esc(m.label)}</option>`).join("");
+  if (picker) picker.value = verdict.metric.id;
+  stage.innerHTML = `<div class="cmp-verdict"><div><span class="eyebrow">Selected measure · ${esc(verdict.metric.label)}</span><h3>${esc(verdict.text)}</h3></div><div class="muted" style="font-size:12.5px;text-align:right">${esc(a.name)} ${esc(verdict.metric.fmt(verdict.metric.get(a)))}<br>${esc(b.name)} ${esc(verdict.metric.fmt(verdict.metric.get(b)))}</div></div>${compareColumn(a, verdict)}${compareColumn(b, verdict)}`;
 }
+$("#cmpMetric").addEventListener("change", e => { state.metric = e.target.value; store.set("metric", state.metric); const atlasMetric = $("#metric"); if (atlasMetric) atlasMetric.value = state.metric; renderCompare(); });
 $("#cmpStage").addEventListener("input", e => {
   const input = e.target.closest(".cmp-q"); if (!input) return;
   const box = input.parentElement.querySelector(".cmp-sugg");
@@ -4099,6 +4127,24 @@ function cfHead(c, d, st){
       <div class="cf-bar"><span class="vs vs-${st}" title="${esc(VERIFY[st][1])}">${esc(VERIFY[st][0])}</span><span class="muted">${esc(VERIFY[st][1])}.</span>${researchBtnHtml(c)}<button class="textbtn" type="button" data-dos="${c.iso3}">Open on the atlas</button></div>
       <div class="cf-tabs" role="tablist">${tabs.map(([k, l], i) => `<button type="button" role="tab" data-cft="${k}" aria-selected="${state.cf.tab === k}"><span>${String(i + 1).padStart(2, "0")}</span>${esc(l)}</button>`).join("")}</div></div>`;
 }
+
+function budgetGlance(c){
+  const sp = c.space || {}, e = c.esa || {}, k = c.cal;
+  const bits = [];
+  if (sp.usd != null) bits.push(`<p><b>${esc(fUsdM(sp.usd))}</b>${sp.year ? " · " + esc(String(sp.year)) : ""}${sp.tag ? " · " + esc(sp.tag) : ""}</p>`);
+  if (e.cm25 != null || e.cm22 != null) bits.push(`<p>ESA cycle: ${e.cm25 != null ? "CM25 " + esc(fEurM(e.cm25)) : "CM25 n/a"}${e.cm22 != null ? " · CM22 " + esc(fEurM(e.cm22)) : ""}</p>`);
+  if (k){ const st = winStatus(c, budNow()); bits.push(`<p>${esc(WIN[st] ? WIN[st].l : "No window this month")}. Primary ${esc(winLabel(k.p))}. Secondary ${esc(winLabel(k.s))}.</p>`); }
+  return bits.join("") || `<p class="muted">No budget cycle is on file.</p>`;
+}
+function governmentGlance(c){
+  if (!c.pol) return `<p class="muted">No political calendar is on file.</p>`;
+  const d = decisive(c), n = nextAny(c);
+  return `${d ? cycleBar(d, elType(d.type) + " cycle") : ""}<p>${n ? "Next " + esc(elType(n.type).toLowerCase()) + " vote: " + esc(fmtP(n.next)) : "No national vote is scheduled."}</p>`;
+}
+function atlasGlance(c){
+  const tags = groupTags(c);
+  return `<section class="cf-atlas" aria-label="Atlas dossier"><div><span class="eyebrow">Memberships</span>${tags ? `<div class="tags" style="margin-top:8px">${tags}</div>` : `<p class="muted">No ESA, EU, NATO or other recorded membership.</p>`}</div><div><span class="eyebrow">Government cycle</span>${governmentGlance(c)}</div><div><span class="eyebrow">Budget cycle</span>${budgetGlance(c)}</div></section>`;
+}
 function researchBtnHtml(c){
   if (!CFG.researchTriggerId) return "";
   if (!(state.mcp && state.canWrite)) return "";
@@ -4117,7 +4163,7 @@ function renderCMain(){
   else if (F.tab === "media") body = cfMediaHtml(c, d);
   else if (F.tab === "states") body = cfStatesHtml(c);
   else body = cfSourcesHtml(c, d);
-  $("#cMain").innerHTML = `<div class="inner wide">${cfHead(c, d0 || d, st)}<div class="cf-body">${body}</div></div>`;
+  $("#cMain").innerHTML = `<div class="inner wide">${cfHead(c, d0 || d, st)}${atlasGlance(c)}<div class="cf-body">${body}</div></div>`;
   if (!lk && F.tab === "government") drawGov(c, d);
   if (!lk && F.tab === "stakeholders") drawStake(c, d);
 }
