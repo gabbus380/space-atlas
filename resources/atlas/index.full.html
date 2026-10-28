@@ -657,6 +657,21 @@ table.cmp td.nm{color:var(--ink);font-weight:400}
 table.cmp td.nm small{color:var(--ink-3);font-family:var(--mono);font-size:10px;margin-left:6px}
 table.cmp td.hot{color:var(--ink);font-weight:600}
 .cellbar{display:inline-block;height:4px;border-radius:2px;background:var(--strato);vertical-align:middle;margin-right:8px;opacity:.8}
+.cmp-stage{min-height:0;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.cmp-col{min-width:0;padding:18px 22px 56px}
+.cmp-col + .cmp-col{border-left:1px solid var(--line)}
+.cmp-col h3{margin:12px 0 4px;font-weight:400;font-size:28px;display:flex;align-items:center;gap:10px}
+.cmp-metric{display:grid;grid-template-columns:minmax(108px,.8fr) 1.4fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.cmp-metric span{color:var(--ink-3);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.cmp-metric b{font-weight:450;overflow-wrap:anywhere}
+.cmp-data{display:none}
+.org-prog{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;padding:8px 0;cursor:pointer}
+.org-prog b{display:block;font-weight:500}
+.org-prog small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:2px}
+@media (max-width:860px){
+  .cmp-stage{grid-template-columns:minmax(0,1fr)}
+  .cmp-col + .cmp-col{border-left:0;border-top:1px solid var(--line)}
+}
 
 /* ---------- Ticker ---------- */
 .ticker{border-top:1px solid var(--line);background:var(--space);display:flex;align-items:center;overflow:hidden;min-width:0}
@@ -1641,11 +1656,12 @@ body,body *{border-radius:0!important}
     <!-- COMPARE -->
     <section class="view" id="v-compare" aria-label="Compare countries">
       <div class="cmp-bar">
-        <div><span class="eyebrow" id="cmpEyebrow">Current selection</span><h2 id="cmpTitle">Compare</h2></div>
-        <span class="muted" style="font-size:12px">Click a column to sort. Click a row to open the dossier.</span>
+        <div><span class="eyebrow">Two countries</span><h2>Compare</h2></div>
+        <span class="muted" style="font-size:12px">Choose one country on each side. The full table stays in the page for export.</span>
         <button class="pill" id="csvBtn" type="button" style="margin-left:auto" hidden>Export CSV</button>
       </div>
-      <div class="cmp-wrap scroll"><table class="cmp" id="cmp"></table></div>
+      <div class="cmp-stage scroll" id="cmpStage"></div>
+      <div class="cmp-data" hidden><table class="cmp" id="cmp"></table></div>
     </section>
   </main>
 
@@ -1782,6 +1798,9 @@ const state = {
   matchAll: store.get("matchAll", true),
   metric: store.get("metric", "space_usd"),
   sel: null,
+  cmpA: store.get("cmpA", "USA"),
+  cmpB: store.get("cmpB", "CHN"),
+  orgFocus: store.get("orgFocus", null),
   briefs: [], brief: null, briefDate: null,
   lens: {}, lensVer: {},
   canWrite: false, isOwner: false,
@@ -1795,6 +1814,7 @@ const state = {
   subs: true, caps: store.get("caps", true), hubs: store.get("hubs", true), subSel: null
 };
 if (!MBY[state.metric]) state.metric = "space_usd";
+if (state.orgFocus && !(G[state.orgFocus] && state.groups.has(state.orgFocus))) state.orgFocus = null;
 if (!R.find(r => r.id === state.region)) state.region = "world";
 
 /* ---------------- focus countries: editable, shared through the page database (config/focus) so the morning run follows them ---------------- */
@@ -2052,12 +2072,14 @@ $("#metric").onchange = e => { state.metric = e.target.value; store.set("metric"
 $("#regions").onclick = e => { const b = e.target.closest("button[data-r]"); if (!b) return; state.region = b.dataset.r; state.sel = null; store.set("region", state.region); renderRail(); renderAll(true); };
 $("#rail").addEventListener("click", e => {
   const b = e.target.closest("button[data-g]"); if (!b) return;
-  const id = b.dataset.g; state.groups.has(id) ? state.groups.delete(id) : state.groups.add(id);
-  store.set("groups", [...state.groups]); state.sel = null; renderRail(); renderAll(true);
+  const id = b.dataset.g;
+  if (state.groups.has(id)) state.groups.delete(id); else state.groups.add(id);
+  if (G[id] && G[id].kind === "align") state.orgFocus = state.groups.has(id) ? id : ([...state.groups].reverse().find(x => G[x] && G[x].kind === "align") || null);
+  store.set("groups", [...state.groups]); store.set("orgFocus", state.orgFocus); state.sel = null; renderRail(); renderAll(true);
 });
 $("#mAll").onclick = () => { state.matchAll = true; store.set("matchAll", true); renderRail(); renderAll(true); };
 $("#mAny").onclick = () => { state.matchAll = false; store.set("matchAll", false); renderRail(); renderAll(true); };
-$("#clearF").onclick = () => { state.groups.clear(); store.set("groups", []); state.region = "world"; store.set("region","world"); state.sel = null; renderRail(); renderAll(true); };
+$("#clearF").onclick = () => { state.groups.clear(); state.orgFocus = null; store.set("groups", []); store.set("orgFocus", null); state.region = "world"; store.set("region","world"); state.sel = null; renderRail(); renderAll(true); };
 $("#railToggle").onclick = () => $("#rail").classList.toggle("open");
 
 /* focus manager */
@@ -2116,6 +2138,7 @@ document.addEventListener("click", e => { if (!e.target.closest(".search")) sugg
 /* ---------------- panel: overview ---------------- */
 function sum(list, f){ let s = 0, n = 0; list.forEach(c => { const v = f(c); if (v != null && isFinite(v)){ s += v; n++; } }); return {s, n}; }
 function renderOverview(){
+  if (state.orgFocus && state.groups.has(state.orgFocus) && G[state.orgFocus] && G[state.orgFocus].kind === "align") return renderOrgDossier(state.orgFocus);
   const list = filtered(); const core = list.filter(c => c.core);
   const fl = filterLabel(); const m = MBY[state.metric];
   const sp = sum(list, c => c.space && c.space.usd), gdp = sum(list, c => c.gdp);
@@ -2657,56 +2680,126 @@ async function runNow(){
   }
 }
 
+
+const ORG_PROFILE = {
+  esa_member:{name:"European Space Agency", hq:"Paris", url:"https://www.esa.int/", match:/European Space Agency|^ESA\b/i, about:"ESA is the intergovernmental civil space agency of its member states. This dossier uses the member list, the CM25 subscriptions on those country profiles, and the programs whose lead is ESA."},
+  esa_assoc:{name:"European Space Agency", hq:"Paris", url:"https://www.esa.int/", match:/European Space Agency|^ESA\b/i, about:"Associate members take part in ESA under a narrower arrangement than full members. The programs shown are ESA programs. The member list is limited to the associate members selected on the map."},
+  esa_coop:{name:"European Space Agency", hq:"Paris", url:"https://www.esa.int/", match:/European Space Agency|^ESA\b/i, about:"Cooperating states and agreement partners work with ESA without full membership. The programs shown are ESA programs. The member list follows the selected cooperation group."},
+  eu:{name:"European Union", hq:"Brussels", url:"https://european-union.europa.eu/", match:/European Commission|European Union|EUSPA/i, about:"The European Union funds and regulates a distinct set of space programs, with the Commission and EUSPA named on the program records. Member totals below come from the EU country profiles."},
+  nato:{name:"NATO", hq:"Brussels", url:"https://www.nato.int/", match:/NATO/i, about:"NATO is a defense alliance. The atlas records its members and their national space, defense and research figures. A program appears here only when NATO is named as its lead."},
+  oecd:{name:"OECD", hq:"Paris", url:"https://www.oecd.org/", match:/OECD/i, about:"The OECD is an economic organization. This dossier sums the space figures of its members. A program appears here only when the OECD is named as its lead."},
+  artemis:{name:"Artemis Accords", hq:"Washington", url:"https://www.nasa.gov/artemis-accords/", match:/Artemis/i, about:"The Artemis Accords are a set of principles for civil exploration of the Moon and beyond. Signatories are taken from the atlas membership list, and programs appear when Artemis is named in the program record."},
+  ilrs:{name:"International Lunar Research Station", hq:"Beijing", url:"https://www.cnsa.gov.cn/", match:/ILRS|International Lunar Research Station/i, about:"The International Lunar Research Station is the China-led lunar partnership recorded in the atlas. Partners and programs that name the station are shown from the atlas records."},
+  brics:{name:"BRICS", match:/BRICS/i, about:"BRICS is a political and economic group. The dossier sums member space figures and lists a program only when BRICS is named as its lead."},
+  sco:{name:"Shanghai Cooperation Organisation", hq:"Beijing", match:/Shanghai Cooperation/i, about:"The Shanghai Cooperation Organisation is a regional political and security group. Member space figures are summed from the country profiles."},
+  csto:{name:"Collective Security Treaty Organization", hq:"Moscow", match:/CSTO|Collective Security Treaty/i, about:"The CSTO is a defense alliance. Member space and defense figures are summed from the country profiles."},
+  eaeu:{name:"Eurasian Economic Union", hq:"Moscow", match:/Eurasian Economic Union/i, about:"The Eurasian Economic Union is an economic union. Member space figures are summed from the country profiles."},
+  g7:{name:"G7", match:/^G7\b/i, about:"The G7 is a group of advanced economies. This dossier sums their space figures from the country profiles."},
+  g20:{name:"G20", match:/^G20\b/i, about:"The G20 is a group of major economies. This dossier sums their space figures from the country profiles."},
+  eumetsat:{name:"EUMETSAT", hq:"Darmstadt", url:"https://www.eumetsat.int/", match:/EUMETSAT|Eumetsat/i, about:"EUMETSAT operates Europe's meteorological satellite system. Members and any program that names EUMETSAT are taken from the atlas."},
+  iss:{name:"International Space Station partnership", url:"https://www.nasa.gov/international-space-station/", match:/International Space Station|\bISS\b/i, about:"The ISS partnership is the group of states recorded as partners in the station. Programs appear when the station is named in the program record."},
+  apsco:{name:"Asia-Pacific Space Cooperation Organization", url:"http://www.apsco.int/", match:/APSCO|Asia-Pacific Space Cooperation/i, about:"APSCO is a regional space organization. Members and any program that names APSCO are taken from the atlas."},
+  ots:{name:"Organization of Turkic States", match:/Turkic States/i, about:"The Organization of Turkic States is a regional political organization. A program appears here when the organization is named on the program record."}
+};
+function orgPrograms(profile){
+  if (!profile.match) return [];
+  return projAll().filter(p => profile.match.test((p.lead && p.lead.org) || "") || profile.match.test(p.name || "") || profile.match.test(p.short || ""));
+}
+function renderOrgDossier(id){
+  const g = G[id];
+  const profile = Object.assign({ name:g.label, short:g.short || g.label, hq:"", url:"", match:null, about:g.note || "Membership recorded in the atlas. The figures below are summed from the member country profiles." }, ORG_PROFILE[id] || {});
+  const members = (g.members || []).filter(i => C[i]).map(i => C[i]).sort((a,b) => a.name.localeCompare(b.name));
+  const sp = sum(members, c => c.space && c.space.usd), gdp = sum(members, c => c.gdp), cm = sum(members, c => c.esa && c.esa.cm25);
+  const programs = orgPrograms(profile);
+  const others = [...state.groups].filter(x => x !== id && G[x]).map(x => G[x].short || G[x].label);
+  $("#panel").innerHTML = `<div class="sec">
+      <span class="eyebrow">Alignment · ${members.length} ${members.length === 1 ? "member" : "members"}</span>
+      <h2>${esc(profile.name)}</h2>
+      <p class="prose">${esc(profile.about)}</p>
+      <div class="tags">${profile.hq ? `<span class="tag">${esc(profile.hq)}</span>` : ""}${g.note ? `<span class="tag">${esc(g.note)}</span>` : ""}</div>
+      ${profile.url ? `<a class="src" href="${esc(profile.url)}" target="_blank" rel="noopener">${esc(hostOf(profile.url))}</a>` : ""}
+      ${others.length ? `<p class="muted" style="font-size:12px">The map also applies ${esc(others.join(", "))}.</p>` : ""}
+    </div>
+    <div class="sec"><h4 class="eyebrow">From member profiles</h4><div class="figs">
+      ${fig("Members", String(members.length), "")}
+      ${fig("Space budgets", fUsdM(sp.s || null), "Sum of " + sp.n + " reported", sp.n === 0)}
+      ${fig("Combined GDP", fUsdB(gdp.s || null), gdp.n + " countries", gdp.n === 0)}
+      ${cm.n ? fig("ESA CM25", fEurM(cm.s), cm.n + " subscriptions") : ""}
+    </div></div>
+    <div class="sec"><h4 class="eyebrow">Programs · ${programs.length}</h4>
+      ${programs.length ? programs.map(p => `<button type="button" class="org-prog" data-proj="${esc(p.id)}"><b>${esc(p.short || p.name)}</b><small>${esc([p.status, p.timeline, p.budget].filter(Boolean).join(" · "))}</small></button>`).join("") : `<div class="empty">No program in the atlas names this organization as its lead.</div>`}
+    </div>
+    <div class="sec"><h4 class="eyebrow">Members</h4><div class="chips">${members.map(c => `<button type="button" class="chip" data-sel="${c.iso3}">${flag(c.iso3)}${esc(c.short || c.name)}</button>`).join("")}</div></div>`;
+  const p = $("#panel"); if (p) p.scrollTop = 0;
+}
+
 /* ---------------- compare ---------------- */
 const COLS = [
   {k:"name", l:"Country", get:c=>c.name, fmt:v=>v, str:true},
-  {k:"space_usd"}, {k:"space_pct"}, {k:"space_pc"}, {k:"gdp"}, {k:"def_pct"}, {k:"def_usd"}, {k:"gerd"},
+  {k:"region", l:"Region", get:c=>((R.find(r => r.id === c.region) || {}).label) || c.subregion || null, fmt:v=>v, str:true},
+  {k:"space_usd"}, {k:"space_pct"}, {k:"space_pc"}, {k:"gdp"}, {k:"pop", l:"Population", get:c=>c.pop, fmt:fPop},
+  {k:"def_pct"}, {k:"def_usd"}, {k:"gerd"},
   {k:"esa", l:"ESA", get:c=>c.esa && c.esa.status && c.esa.status !== "none" ? c.esa.status : null, fmt:v=>cap(v), str:true},
-  {k:"cm25"},
+  {k:"cm25"}, {k:"esa_contrib", l:"ESA contribution", get:c=>c.esa && c.esa.contrib, fmt:fEurM},
+  {k:"agency", l:"Agency", get:c=>c.agency && (c.agency.abbr || c.agency.name), fmt:v=>v, str:true},
+  {k:"hsf", l:"Human spaceflight", get:c=>c.hsf ? ((HSF[c.hsf] || {}).l || c.hsf) : null, fmt:v=>v, str:true},
+  {k:"flown"}, {k:"ready"}, {k:"sats"}, {k:"index"},
   {k:"eco", l:"Ecosystem orgs", get:c=>orgCount(c.iso3) || null, fmt:fInt},
   {k:"proj", l:"Programs", get:c=>projectsFor(c.iso3).length || null, fmt:fInt},
   {k:"bh", l:"Tracker entries", get:c=>bhFor(c.iso3).length || null, fmt:fInt},
+  {k:"strategy", l:"Space strategy", get:c=>{ const d = cfData(c.iso3), s = d && d.strategy; return s && s.title ? s.title : null; }, fmt:v=>v, str:true},
+  {k:"file", l:"Country file", get:c=>{ const d = cfData(c.iso3); return d && d.verify ? d.verify : null; }, fmt:v=>v, str:true},
+  {k:"media", l:"Local media", get:c=>{ const d = cfData(c.iso3); return d && d.media && Array.isArray(d.media.outlets) ? d.media.outlets.length : null; }, fmt:fInt},
   {k:"elnext", l:"Next election", get:c=>{ const n = nextAny(c); return n ? n.next.t : null; }, fmt:v=>{ const d = new Date(v); return MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); }},
-  {k:"elcyc", l:"Term elapsed", get:c=>{ const d = decisive(c); return d && d.pct != null ? d.pct * 100 : null; }, fmt:v=>Math.round(v) + "%"},
-  {k:"flown"}, {k:"ready"}, {k:"sats"}, {k:"index"}
+  {k:"elcyc", l:"Term elapsed", get:c=>{ const d = decisive(c); return d && d.pct != null ? d.pct * 100 : null; }, fmt:v=>Math.round(v) + "%"}
 ].map(col => col.get ? col : Object.assign({l:MBY[col.k].label.replace(/ \(.*\)/,"").replace(", best available",""), get:MBY[col.k].get, fmt:MBY[col.k].fmt}, col));
-function renderCompare(){
-  const list = filtered().filter(c => c.core || c.gdp != null);
-  const fl = filterLabel();
-  $("#cmpEyebrow").textContent = fl.groups ? fl.region + " · " + fl.groups : fl.region;
-  $("#cmpTitle").textContent = `Compare ${list.length} countries`;
-  const sc = COLS.find(c => c.k === state.sort.key) || COLS[1];
-  const rows = list.slice().sort((a,b) => {
-    const va = sc.get(a), vb = sc.get(b);
-    if (va == null && vb == null) return a.name.localeCompare(b.name);
-    if (va == null) return 1; if (vb == null) return -1;
-    return sc.str ? state.sort.dir * String(va).localeCompare(String(vb)) : state.sort.dir * (va - vb);
-  });
-  const maxes = {}; COLS.forEach(col => { if (!col.str){ const vs = list.map(col.get).filter(v => v != null); maxes[col.k] = vs.length ? Math.max(...vs) : 1; } });
-  $("#cmp").innerHTML = `<thead><tr>${COLS.map(col => `<th scope="col" data-k="${col.k}" ${col.k === state.sort.key ? `aria-sort="${state.sort.dir < 0 ? "descending" : "ascending"}"` : ""}>${esc(col.l)}</th>`).join("")}</tr></thead>
-  <tbody>${rows.map(c => `<tr data-sel="${c.iso3}">${COLS.map(col => {
-    const v = col.get(c);
-    if (col.k === "name") return `<td class="nm">${flag(c.iso3)}${esc(c.name)}<small>${c.iso3}</small>${c.focus===1 ? ` <span class="tag o" style="margin-left:4px">Focus</span>` : ""}</td>`;
-    if (v == null) return `<td class="na">n/a</td>`;
-    const bar = (!col.str && col.k === state.sort.key && col.k !== "pwin" && col.k !== "elnext") ? `<span class="cellbar" style="width:${Math.max(2, 46 * Math.min(1, (col.k.startsWith("rc_") ? v/1.5 : (MBY[col.k] && MBY[col.k].tf==="log" ? Math.log10(1+v)/Math.log10(1+maxes[col.k]) : v / maxes[col.k]))))}px;${col.k.startsWith("rc_") ? "background:" + (v < 0.8 ? "var(--martian)" : v < 1 ? "var(--solar)" : "var(--reef)") : ""}"></span>` : "";
-    const st = (col.k === "space_usd" && c.space && c.space.tag && c.space.tag !== "National budget") ? `<small class="muted" style="font-size:9.5px;margin-left:5px">${c.space.tag === "ESA share only" ? "ESA" : "EST"}</small>` : "";
-    return `<td class="${col.k === state.sort.key ? "hot" : ""}">${bar}${esc(col.fmt(v))}${st}</td>`;
-  }).join("")}</tr>`).join("")}</tbody>`;
+function compareUniverse(){ return A.countries.filter(c => C[c.iso3]).slice().sort((a, b) => a.name.localeCompare(b.name)); }
+function compareCell(col, c){ const v = col.get(c); return v == null || v === "" ? "n/a" : col.fmt(v); }
+function renderCompareTable(list){
+  const table = $("#cmp"); if (!table) return;
+  table.innerHTML = `<thead><tr><th scope="col">ISO3</th>${COLS.map(col => `<th scope="col">${esc(col.l)}</th>`).join("")}</tr></thead><tbody>${list.map(c => `<tr data-iso="${c.iso3}"><td>${esc(c.iso3)}</td>${COLS.map(col => `<td>${esc(compareCell(col, c))}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  window.ATLAS_COMPARE = list.map(c => { const row = { iso3:c.iso3 }; COLS.forEach(col => { const v = col.get(c); row[col.k] = v == null ? null : v; }); return row; });
 }
-$("#cmp").onclick = e => {
-  const th = e.target.closest("th[data-k]");
-  if (th){ const k = th.dataset.k; if (state.sort.key === k) state.sort.dir *= -1; else { state.sort.key = k; state.sort.dir = (k === "name" || k === "esa" || k === "pwin" || k === "grade" || k === "elnext" || k.startsWith("rc_")) ? 1 : -1; } renderCompare(); return; }
-  const tr = e.target.closest("tr[data-sel]"); if (tr){ setView("atlas"); selectCountry(tr.dataset.sel, true); }
-};
+function compareColumn(c){
+  return `<article class="cmp-col"><div class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><input class="cmp-q" type="search" placeholder="Choose a country" value="" aria-label="Choose a country to compare" autocomplete="off" data-side="${c.iso3}"><div class="sugg cmp-sugg" hidden></div></div>
+    <h3>${flag(c.iso3, "lg")}<span>${esc(c.name)}</span></h3><span class="muted" style="font-size:12px">${esc(c.iso3)}${c.agency && c.agency.name ? " · " + esc(c.agency.abbr || c.agency.name) : ""}</span>
+    <div class="cmp-metrics">${COLS.filter(col => col.k !== "name").map(col => `<div class="cmp-metric"><span>${esc(col.l)}</span><b>${esc(compareCell(col, c))}</b></div>`).join("")}</div></article>`;
+}
+function renderCompare(){
+  if (window.ATLAS_LOCK && window.ATLAS_LOCK.locked("compare")) return;
+  const all = compareUniverse();
+  if (!C[state.cmpA]) state.cmpA = (all.find(c => c.core) || all[0] || {}).iso3;
+  if (!C[state.cmpB] || state.cmpB === state.cmpA) state.cmpB = (all.find(c => c.iso3 !== state.cmpA && c.core) || all.find(c => c.iso3 !== state.cmpA) || {}).iso3;
+  renderCompareTable(all);
+  const stage = $("#cmpStage"); if (!stage || !C[state.cmpA] || !C[state.cmpB]) return;
+  stage.innerHTML = compareColumn(C[state.cmpA]) + compareColumn(C[state.cmpB]);
+}
+$("#cmpStage").addEventListener("input", e => {
+  const input = e.target.closest(".cmp-q"); if (!input) return;
+  const box = input.parentElement.querySelector(".cmp-sugg");
+  const t = input.value.trim().toLowerCase();
+  if (!t){ box.hidden = true; return; }
+  const list = compareUniverse().filter(c => c.name.toLowerCase().includes(t) || c.iso3.toLowerCase() === t || (c.alt || []).some(a => a.toLowerCase().includes(t))).slice(0, 8);
+  box.innerHTML = list.map(c => `<button type="button" data-cmp="${input.dataset.side}" data-pick="${c.iso3}"><span>${flag(c.iso3)}${esc(c.name)}</span><span class="muted num">${c.iso3}</span></button>`).join("") || `<div class="empty" style="margin:6px">No match</div>`;
+  box.hidden = false;
+});
+$("#cmpStage").addEventListener("click", e => {
+  const b = e.target.closest("[data-pick]"); if (!b) return;
+  const side = b.dataset.cmp, pick = b.dataset.pick;
+  if (side === state.cmpA){ state.cmpA = pick; if (state.cmpB === pick) state.cmpB = side; }
+  else { state.cmpB = pick; if (state.cmpA === pick) state.cmpA = side; }
+  store.set("cmpA", state.cmpA); store.set("cmpB", state.cmpB); renderCompare();
+});
 $("#csvBtn").onclick = async () => {
   if (!state.downloads) return;
-  const list = filtered().filter(c => c.core || c.gdp != null);
+  const list = compareUniverse();
   const head = ["iso3"].concat(COLS.map(c => c.l));
   const lines = [head].concat(list.map(c => [c.iso3].concat(COLS.map(col => { const v = col.get(c); return v == null ? "" : v; }))));
   const csv = lines.map(r => r.map(x => { const s = String(x); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }).join(",")).join("\n");
-  try{ await state.downloads.save({ filename:"sovereign-space-atlas.csv", data:csv }); }
+  try{ await state.downloads.save({ filename:"sovereign-space-atlas-compare.csv", data:csv }); }
   catch(e){ if (e && e.code !== "declined") toast("Export is not available in this view."); }
 };
+
 
 /* ---------------- Claude: R/P/B and Ask ---------------- */
 const RULES = "Write in American English for a senior reader. Be direct, neutral and concrete. Do not use em dashes, en dashes or semicolons. Say program, not programme. Never invent figures. If a figure is missing, say it is not public. Do not favor or promote any company.";
