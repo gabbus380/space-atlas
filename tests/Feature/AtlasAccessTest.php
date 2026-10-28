@@ -71,6 +71,8 @@ class AtlasAccessTest extends TestCase
         $this->assertArrayNotHasKey('gdp', $fra);
         $this->assertArrayNotHasKey('cm25', $fra['esa']);
         $this->assertStringContainsString('Compare countries side by side.', $html);
+        $this->assertStringContainsString('id="cmpStage"', $html);
+        $this->assertStringContainsString('class="cmp-data" hidden', $html);
     }
 
     public function test_guest_live_data_is_filtered(): void
@@ -177,6 +179,8 @@ class AtlasAccessTest extends TestCase
         $atlas = app(AtlasData::class)->atlas();
         $this->assertStringContainsString($atlas['blackhat'][0]['title'], $html);
         $this->assertStringContainsString('"cm25":3600', $html);
+        $this->assertStringContainsString('id="cmpStage"', $html);
+        $this->assertStringContainsString('European Space Agency', $html);
 
         $j = $this->getJson('/app/live')->json();
         $this->assertGreaterThan(1, count($j['collections']['briefings']));
